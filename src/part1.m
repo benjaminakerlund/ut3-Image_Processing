@@ -2,11 +2,11 @@
 clc; clear; close all;
 
 % Load colour image and convert to B&W 
-cargo = imread('../cargo.jpg');
+cargo = imread('../BE1_IntroComputerVision/cargo.jpg');
 cargo_gray = im2gray(cargo);
 
 % Display images
-figure Name 'Question1' FileName 'Question1'
+figure Name 'Part1_Question1' FileName 'Part1_Question1'
 sgtitle('Loading and generating a RGB and B&W image')
 subplot(1,2,1)
 imshow(cargo)
@@ -26,9 +26,10 @@ clc; clear; close all;
 
 A = repmat(linspace(0,1,1000),500,1);
 A(220:280,:) = 0.5;
-figure Name 'Question2' FileName 'Question2'
+figure Name 'Part1_Question2' FileName 'Part1_Question2'
 imshow(A)
 title('Grayscale Illusion')
+imsave(Question2)
 
 
 %% Question 3: custom images
@@ -70,7 +71,7 @@ end
 
 
 % Plot Stripes
-figure Name 'Question3a' FileName 'Question3a'
+figure Name 'Part1_Question3a' FileName 'Part1_Question3a'
 sgtitle('Stripes')
 subplot(2,2,1)
 imshow(B)
@@ -96,7 +97,7 @@ disk = insertShape(disk_gen,'filled-circle',[250 250 50], ...
     ShapeColor = 'white', Opacity = 1);
 
 % Plot Rectangles & Disks
-figure Name 'Question3b' FileName 'Question3b'
+figure Name 'Part1_Question3b' FileName 'Part1_Question3b'
 sgtitle('Rectangles & Disks')
 subplot(1,2,1)
 imshow(rect)
@@ -111,10 +112,10 @@ title('Circle generated with insertShape')
 clc; clear; close all;
 
 % Load images
-teinte = imread('../Teinte.jpg');
-oeil = imread('../oeil.jpg');
-cargo = imread('../cargo.jpg');
-CoulAdd = imread('../CoulAdd.png');
+teinte = imread('../BE1_IntroComputerVision/Teinte.jpg');
+oeil = imread('../BE1_IntroComputerVision/oeil.jpg');
+cargo = imread('../BE1_IntroComputerVision/cargo.jpg');
+CoulAdd = imread('../BE1_IntroComputerVision/CoulAdd.png');
 
 % Conversions to R, G and B components for teinte
 [teinte_R, teinte_G, teinte_B] = deal(teinte);
@@ -141,7 +142,7 @@ CoulAdd_G(:, :, [1 3]) = 0;     % RGB vector 2 value is GREEN, put others to 0
 CoulAdd_B(:, :, 1:2) = 0;       % RGB vector 3 value is BLUE, put others to 0
 
 % Plot original images
-figure Name 'Question4a' FileName 'Question4a'
+figure Name 'Part1_Question4a' FileName 'Part1_Question4a'
 sgtitle('Comparison of original images and red, green and blue components')
 
 % Plots for teinte
@@ -205,7 +206,7 @@ FI(:, 2*row:3*row, 1:2) = 0;    % Horisontal stripe, make all else than blue 0
 % Z = cat(3,A,B,C)
 
 % Display flags
-figure Name 'Question4' FileName 'Question4'
+figure Name 'Part1_Question5' FileName 'Part1_Question5'
 sgtitle('French and Finnish flags')
 subplot(1,2,1), imshow(FR), title("French flag")
 subplot(1,2,2), imshow(FI), title("Finnish flag")
@@ -224,7 +225,7 @@ W = 640;
 I_hsv = zeros(H, W, 3);
 I_hsv(:,:,3) = 1;
 
-figure Name Question6c FileName Question6c
+figure Name 'Part1_Question6a' FileName 'Part1_Question6a'
 sgtitle('Generate HSV Color Space')
 subplot(2,2,1), imshow(I_hsv), title('Blue image')
 
@@ -241,6 +242,9 @@ end
 subplot(2,2,3), imshow(I_hsv), title('Adding vertical saturation')
 subplot(2,2, 4), imshow(hsv2rgb(I_hsv)), title('HSV Color Space')
 
+figure Name 'Part1_Question6b' FileName 'Part1_Question6b'
+sgtitle('Grayscale of the HSV colorspace image')
+imshow(rgb2gray(hsv2rgb(I_hsv)))
 
 %% Question 7
 % What are the values of \alpha, \beta and \gamma?
@@ -250,12 +254,12 @@ subplot(2,2, 4), imshow(hsv2rgb(I_hsv)), title('HSV Color Space')
 % Load ans display SpainBeach.jpg and isolate the beach.
 clc; clear; close all;
 
-beach = imread('../SpainBeach.jpg');
+beach = imread('../BE1_IntroComputerVision/SpainBeach.jpg');
 
 % DO STUFF
 
 % Plot the results
-figure Name Question8 FileName Question8
+figure Name 'Part1_Question8' FileName 'Part1_Question8'
 sgtitle('Isolating a beach')
 subplot(1,2,1), imshow(beach), title('RGB')
 subplot(1,2,2), imshow(rgb2hsv(beach)), title('HSV')
@@ -274,7 +278,7 @@ end
 
 
 % Plot Stripes
-figure Name 'Question13' 
+figure Name 'Part1_Question13' FileName 'Part1_Question13'
 sgtitle('Stripes')
 subplot(2,2,1)
 imshow(B)
