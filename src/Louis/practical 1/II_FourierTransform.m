@@ -1,4 +1,64 @@
 %% Question 13: FT spectrum of geometric shapes and patterns
+
+% Rectangle function
+function image = rectangle(width, height, rect_width, rect_height)
+    image = zeros(height, width);
+    rect = ones(rect_height, rect_width);
+    start_height = floor((height - rect_height) / 2) + 1;
+    start_width = floor((width - rect_width) /  2) + 1;
+
+    image(start_height:start_height+rect_height-1, start_width:start_width+rect_width-1) = rect;
+end
+
+% Circle function
+function image = circle(width, height, radius)
+    image = zeros(height, width);
+
+    circle = zeros(2*radius, 2*radius);
+    for i = 1:2*radius
+        for j = 1:2*radius
+            if (i - radius).^2 + (j - radius).^2 <= radius.^2
+                circle(i, j) = 1;
+            end
+        end
+    end
+    
+    start_height = floor((height - 2 * radius) / 2) + 1;
+    start_width = floor((width - 2 * radius) /  2) + 1;
+    image(start_height:start_height+2*radius-1, start_width:start_width+2*radius-1) = circle;
+end
+
+% vertical stripes function
+function im_striped = vertical_stripes(width, height, stripe_width)
+    im_striped = ones(height, width);
+    for i = 1:2*stripe_width:width
+        % avoid the image from expanding
+        end_index = i+stripe_width-1;
+        if end_index > width
+            stripe_width = stripe_width - (end_index - width);
+            end_index = width;
+        end
+        % draw the stripes
+        im_striped(:,i:end_index) = zeros(height, stripe_width);
+    end
+end
+
+% horizontal stripes function
+function im_striped = horizontal_stripes(width, height, stripe_width)
+    im_striped = ones(height, width);
+    for i = 1:2*stripe_width:height
+        % avoid the image from expanding
+        end_index = i+stripe_width-1;
+        if end_index > height
+            stripe_width = stripe_width - (end_index - height);
+            end_index = height;
+        end
+        % draw the stripes
+        im_striped(i:end_index,:) = zeros(stripe_width, width);
+    end
+end
+
+
 width = 512;
 height = 512;
 stripe_width = 32;
