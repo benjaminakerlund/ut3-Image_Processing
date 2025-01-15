@@ -251,19 +251,21 @@ imshow(rgb2gray(hsv2rgb(I_hsv)))
 
 
 %% Question 8
-% Load ans display SpainBeach.jpg and isolate the beach.
+% Load and display SpainBeach.jpg and isolate the beach.
 clc; clear; close all;
 
-beach = imread('../BE1_IntroComputerVision/SpainBeach.jpg');
+RGB = imread('../BE1_IntroComputerVision/SpainBeach.jpg');
 
-% DO STUFF
+HSV = rgb2hsv(RGB);
+HSV_filtered = HSV;
+mask = HSV_filtered(:,:,1) > 0.05 & HSV_filtered(:,:,1) < 0.06;
 
 % Plot the results
 figure Name 'Part1_Question8' FileName 'Part1_Question8'
-sgtitle('Isolating a beach')
-subplot(1,2,1), imshow(beach), title('RGB')
-subplot(1,2,2), imshow(rgb2hsv(beach)), title('HSV')
-
+sgtitle('Isolating the beach')
+subplot(1,3,1), imshow(RGB), title('Original Image')
+subplot(1,3,2), imshow(rgb2hsv(RGB)), title('Filtered Image')
+subplot(1,3,3), imshow(mask), title('Isolated Beaches')
 
 %% Question 13
 clc; clear; close all;
@@ -293,3 +295,134 @@ title('Original')
 
 subplot(2,2,4)
 title('FFT')
+
+
+%% Question 13: FT spectrum of geometric shapes and patterns
+width = 512;
+height = 512;
+stripe_width = 32;
+radius = 32;
+rect_w = 64;
+rect_h = 32;
+figure;
+
+image = rectangle(width, height, rect_w, rect_h);
+ft_horizontal_stripes = fft2(image, width, height);
+ft_horizontal_stripes = fftshift(ft_horizontal_stripes);
+ft_spectrum = abs(ft_horizontal_stripes);
+
+subplot(2,4,1)
+imshow(image);
+subplot(2,4,2)
+imagesc(ft_spectrum);
+
+image = circle(width, height, radius);
+ft_horizontal_stripes = fft2(image, width, height);
+ft_horizontal_stripes = fftshift(ft_horizontal_stripes);
+ft_spectrum = abs(ft_horizontal_stripes);
+
+subplot(2,4,3)
+imshow(image);
+subplot(2,4,4)
+imagesc(ft_spectrum);
+
+image = horizontal_stripes(width, height, stripe_width);
+ft_horizontal_stripes = fft2(image, width, height);
+ft_horizontal_stripes = fftshift(ft_horizontal_stripes);
+ft_spectrum = abs(ft_horizontal_stripes);
+
+subplot(2,4,5)
+imshow(image);
+subplot(2,4,6)
+imagesc(ft_spectrum);
+
+image = vertical_stripes(width, height, stripe_width);
+ft_horizontal_stripes = fft2(image, width, height);
+ft_horizontal_stripes = fftshift(ft_horizontal_stripes);
+ft_spectrum = abs(ft_horizontal_stripes);
+
+subplot(2,4,7)
+imshow(image);
+subplot(2,4,8)
+imagesc(ft_spectrum);
+
+%% Question 14: FT spectrum of blurred image
+
+%% Question 15: Extraction of field
+clc; clear all; close all;
+
+im = imread('../BE1_IntroComputerVision/champs.bmp');
+[width, height, channels] = size(im);
+
+function [ft, spectrum] = fft_spectrum(image)
+    image = rgb2gray(image); % convert to grayscale as color is not important
+    ft = fft2(image);
+    ft = fftshift(ft);
+    spectrum = abs(ft);
+end
+
+[ft, spectrum] = fft_spectrum(im);
+
+target_angle = deg2rad(52);
+tolerance    = deg2rad(5);
+
+ft_mask = zeros(width, height);
+
+center_cutoff = 32;
+for w=1:width
+    for h=1:height
+        x = width/2 - w;
+        y = height/2 - h;
+        if abs(x) < center_cutoff && abs(y) < center_cutoff
+            continue
+        end
+        angle = atan2(y, x);
+        if (target_angle - tolerance) < angle && angle < (target_angle + tolerance)
+            ft_mask(w, h) = 1;
+        end
+    end
+end
+ft_mask = ft_mask + rot90(ft_mask, 2);
+ft_filtered = ft.*ft_mask;
+spectrum_filtered = spectrum.*ft_mask;
+
+ft_filtered = ifftshift(ft_filtered);
+im_mask= ifft2(ft_filtered);
+im_mask = abs(im_mask);
+
+m = max(im_mask(:));
+size(im_mask)
+
+for w=1:width
+    for h=1:height
+        if im_mask(w, h) < m*0.4
+            im_mask(w, h) = 0;
+        else
+            im_mask(w, h) = 1;
+        end
+    end
+end
+
+im_filtered = zeros(width, height, channels);
+for i=1:channels
+    im_filtered(:,:,i) = im(:,:,i) .* uint8(im_mask);
+end
+
+
+% apply some kind of blur, actually dilation and then erode
+
+
+% Plot Stripes
+figure Name 'Part1_Question15' FileName 'Part1_Question15'
+sgtitle('Extract field from Champs.jpg')
+subplot(1,3,1)
+imshow(im)
+title("Original Image")
+
+subplot(1,3,2)
+imagesc(spectrum_filtered)
+title("Filtered Image")
+
+subplot(1,3,3)
+imagesc(uint8(im_filtered))
+title("Extracted Field")
