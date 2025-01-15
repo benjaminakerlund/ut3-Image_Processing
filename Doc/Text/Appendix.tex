@@ -1,29 +1,19 @@
 \begin{appendices}
 
-\section{MATLAB code for Moffat function}
-\label{sec:appendix matlab Moffat}
-\TODO{Example appendix, to be changed later!}
-\begin{lstlisting}[frame=single, language=Octave, numbers=left]
-function PSF = Moffat(beta,r,c)
-% Generate a PSF according to the Moffat model
-
-% Input :
-% - beta, list of parameters beta = [r_c, c_c, a, b]
-% with (r_c,c_c) location of the center of the PSF
-% a scale parameter
-% b shape parameter
-% - Row and Col : row-wise and column-wise grids
-% Typically [Cols,Rows] = meshgrid(1:C,1:L)
-
-r_c = beta(1);
-c_c = beta(2);
-a = beta(3);
-b = beta(4);
+\section{MATLAB code for \autoref{sec:introduction_to_computer_vision}}
+\label{sec:appendix_a}
+\lstinputlisting[frame=single, language=MATLAB, numbers=left]{../src/untitled.m}
 
 
-PSF = (1 + ((r-r_c).^2 + (c-c_c).^2)/a^2).^(-b);
+\newpage
+\section{MATLAB code for \autoref{sec:introduction_to_mathematical_morphology}}
+\label{sec:appendix_b}
+\lstinputlisting[frame=single, language=MATLAB, numbers=left]{../src/part2.m}
 
-end
-\end{lstlisting}
+
+\newpage
+\section{MATLAB code for \autoref{sec:shape_detection}}
+\label{sec:appendix_c}
+\lstinputlisting[frame=single, language=MATLAB, numbers=left]{../src/part3.m}
 
 \end{appendices}
