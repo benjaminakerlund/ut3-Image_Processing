@@ -1,7 +1,7 @@
 clear all, close all, clc ;
+fpath = "C:\Users\benja\Documents\ut3-Image_Processing\Doc\Graphics";
 
-
-%% Data
+% Data
 
 R = 1 ;
 K = 1 ;
@@ -25,10 +25,12 @@ for i = 1 : NbData
     end
 end
 
-figure, plot(PosData(:,1),PosData(:,2),'+b',NegData(:,1),NegData(:,2),'.r') ;
+figure Name 'Part4_example_data' FileName 'Part4_example_data'
+plot(PosData(:,1),PosData(:,2),'+b',NegData(:,1),NegData(:,2),'.r') ;
 axis equal ;
 axis([-4 4 -4 4]) ;
-saveas(gcf,'AllData.png','png') ;
+sgtitle('Example Data')
+saveas(gcf, fullfile(fpath, 'Part4_example_data.png'),'png') ;
 
 %% Apprentissage = Learning
 
@@ -53,13 +55,19 @@ for x = -4 : .2 : 4
 end
  
 
-figure, plot(ResPos(:,1),ResPos(:,2),'.c',ResNeg(:,1),ResNeg(:,2),'.m') ;
+%% Plot simulated data
+figure Name 'Part4_example_SimData' 
+plot(ResPos(:,1),ResPos(:,2),'.c',ResNeg(:,1),ResNeg(:,2),'.m') ;
 axis equal ;
-% saveas(gcf,'SimData.png','png') ;
+sgtitle('Simulated Data')
+saveas(gcf, fullfile(fpath, 'Part4_example_SimData.png'),'png') ;
 
-% Superposition
 
-figure, plot(ResPos(:,1),ResPos(:,2),'.c',ResNeg(:,1),ResNeg(:,2),'.m',...
+
+%% Superposition
+figure Name 'Part4_example_SimAllData'
+plot(ResPos(:,1),ResPos(:,2),'.c',ResNeg(:,1),ResNeg(:,2),'.m',...
              PosData(:,1),PosData(:,2),'+b',NegData(:,1),NegData(:,2),'.r') ;
 axis equal ;
-% saveas(gcf,'SimAllData.png','png') ;
+sgtitle('Simulated data and original data')
+saveas(gcf, fullfile(fpath, 'Part4_example_SimAllData.png'),'png') ;
