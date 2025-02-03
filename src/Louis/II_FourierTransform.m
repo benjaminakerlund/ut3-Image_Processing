@@ -1,6 +1,4 @@
 %% Question 13: FT spectrum of geometric shapes and patterns
-
-% Rectangle function
 function image = rectangle(width, height, rect_width, rect_height)
     image = zeros(height, width);
     rect = ones(rect_height, rect_width);
@@ -10,7 +8,6 @@ function image = rectangle(width, height, rect_width, rect_height)
     image(start_height:start_height+rect_height-1, start_width:start_width+rect_width-1) = rect;
 end
 
-% Circle function
 function image = circle(width, height, radius)
     image = zeros(height, width);
 
@@ -28,7 +25,6 @@ function image = circle(width, height, radius)
     image(start_height:start_height+2*radius-1, start_width:start_width+2*radius-1) = circle;
 end
 
-% vertical stripes function
 function im_striped = vertical_stripes(width, height, stripe_width)
     im_striped = ones(height, width);
     for i = 1:2*stripe_width:width
@@ -43,7 +39,6 @@ function im_striped = vertical_stripes(width, height, stripe_width)
     end
 end
 
-% horizontal stripes function
 function im_striped = horizontal_stripes(width, height, stripe_width)
     im_striped = ones(height, width);
     for i = 1:2*stripe_width:height
@@ -57,7 +52,6 @@ function im_striped = horizontal_stripes(width, height, stripe_width)
         im_striped(i:end_index,:) = zeros(stripe_width, width);
     end
 end
-
 
 width = 512;
 height = 512;
