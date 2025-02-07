@@ -292,7 +292,7 @@ imagexx = imread('../BE1_IntroComputerVision/imagexx.bmp');
 
 imagex_R(:, :, 2:3) = 0; 
 imagex_G(:, :, [1 3]) = 0; 
-imagex_B(:, :, 1:2) = 0;
+%imagex_B(:, :, 1:2) = 0;
 imagexx_R(:, :, 2:3) = 0; 
 imagexx_G(:, :, [1 3]) = 0;
 imagexx_B(:, :, 1:2) = 0;
@@ -303,7 +303,7 @@ subplot(2,5,1), imshow(imagex), title('Original')
 subplot(2,5,2), histogram(imagex), title('Histogram')
 subplot(2,5,3), imshow(imagex_R), title('R')
 subplot(2,5,4), imshow(imagex_G), title('G')
-subplot(2,5,5), imshow(imagex_B), title('B')
+%subplot(2,5,5), imshow(imagex_B), title('B')
 
 subplot(2,5,6), imshow(imagexx), title('Original')
 subplot(2,5,7), histogram(imagexx), title('Histogram')

@@ -275,7 +275,7 @@ se = strel('disk', 3);
 skel = imskel(im, se, 50);
 
 
-figure
+figure, sgtitle('Skeletonization on Blood Cells')
 subplot(2,3,1), imshow(im1)
 subplot(2,3,2), imshow(im)
 subplot(2,3,3), imshow(im), hold on;
