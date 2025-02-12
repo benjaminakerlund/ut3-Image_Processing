@@ -1,13 +1,12 @@
-% Classification Assignment
-clear, close all, clc
+%% k-nearest neighbour clustering
 
-%%
+%% 1-nearest neighbours with Mahalanobis distance
 clear, close all, clc
 
 im = imread('BE1_IntroComputerVision\SpainBeach.jpg');
 imshow(im)
 
-%% Define ('Label') data 
+% Define ('Label') data 
 [height, width, channels] = size(im);
 scale = 7;
 im_downsampled = im(1:scale:height, 1:scale:width, :);
@@ -84,7 +83,7 @@ figure
 subplot(2,1,1), imagesc(pixels_foam), set(gca,'dataAspectRatio',[1 1 1])
 subplot(2,1,2), imagesc(im), set(gca,'dataAspectRatio',[1 1 1])
 
-%% Apply the distance calculation to the entire image
+% Apply the distance calculation to the entire image
 [s_beach, mu_beach] = std(double(data_beach));
 [s_land, mu_land] = std(double(data_land));
 [s_ocean, mu_ocean] = std(double(data_ocean));
@@ -126,8 +125,7 @@ for i=1:height
     end
 end
 
-%% Plotting go Brrrrr
-close all
+% Plotting go Brrrrr
 figure, 
 subplot(2,3,1), imshow(im_beach), title('Beach');
 subplot(2,3,2), imshow(im_land), title('Land');
@@ -144,13 +142,13 @@ figure, imshow(imm)
 
 %% K-NN with K=1 
 clear, clc, close all
-%%
+
 im = imread('BE1_IntroComputerVision\SpainBeach.jpg');
 [height, width, channels] = size(im);
 
 imshow(im)
 
-%%
+
 figure, imshow(im), hold on
 rectangle('Position', [1027, 1, width-1027, 113], 'EdgeColor', 'r', 'LineWidth', 2), hold on
 
@@ -213,7 +211,7 @@ scatter(indices(:, 2), indices(:, 1), 250, '.r')
 
 saveas(gcf, 'kNN_training_sets.png', 'png')
 
-%%
+
 im = double(im);
 
 im_beach = zeros(height, width);
@@ -247,7 +245,7 @@ for i=1:height
     end
 end
 
-%%
+
 figure, 
 subplot(2,2,1), imshow(im_beach), title('Beach')
 subplot(2,2,2), imshow(im_land), title('Land')
@@ -258,119 +256,8 @@ se = strel('disk', 10);
 ime_beach = imopen(im_beach, se);
 
 figure
-subplot(1,2,1), imshow(im .* uint8(im_beach))
-subplot(1,2,2), imshow(im .* uint8(ime_beach))
+subplot(1,2,1), imshow(uint8(im) .* uint8(im_beach))
+subplot(1,2,2), imshow(uint8(im) .* uint8(ime_beach))
 imwrite(im .* uint8(im_beach), 'kNN_classified_beach.png', 'png')
 imwrite(im .* uint8(ime_beach), 'kNN_masked_beach.png', 'png')
-
-%% Neural Networks
-clear, clc, close all 
-%%
-% load image
-im = imread('BE1_IntroComputerVision\SpainBeach.jpg');
-[height, width, channels] = size(im);
-imshow(im)
-
-im_train_beach = im(1:100, 1001:width, :);
-im_train_other = im(501:height, 1:256, :);
-imwrite(im_train_beach, 'training_set_beach.png', 'png');
-imwrite(im_train_other, 'training_set_other.png', 'png');
-%imshow(im_beach)
-%imshow(im_other)
-
-%% Prepare the data and labels
-data = [];
-target = [];
-
-data = reshape(im_train_beach, [], 3);
-n = size(data, 1);
-target = ones(n, 1);
-
-data = [data; reshape(im_train_other, [], 3)];
-m = size(data, 1);
-target = [target; zeros(m-n, 1)];
-
-%% Train the network
-net = feedforwardnet([5 5]);
-net = train(net, double(data)', target');
-
-%% Apply the neural network to the image
-im_data = reshape(im, [], 3);
-output = net(double(im_data)');
-classified_image = reshape(output', height, width);  
-classified_image = classified_image > 0.5;  % Convert probabilities to binary values (0 or 1)
-se = strel('disk', 3);
-mask = imopen(classified_image, se);
-
-figure;
-imshow(im .* uint8(mask))% uint8(classified_image));
-title('Classified Image');
-imwrite(im .* uint8(classified_image), 'nn_classified_beach.png', 'png');
-imwrite(im .* uint8(mask), 'nn_masked_beach.png', 'png');
-
-%% k-means
-clc, clear, close all
-
-% data preparation
-im = imread('BE1_IntroComputerVision\SpainBeach.jpg');
-imRGB = imresize(im, [NaN 64]);
-imHSV = rgb2hsv(imRGB);
-figure, imagesc(imRGB)
-figure, scatter(imHSV(:,:,1), imHSV(:,:,3), '.r')
-[h, w, c] = size(imHSV);
-%data = [reshape(imHSV(:,:,1), [h*w 1]) reshape(imHSV(:,:,3), [h*w 1])];
-
-%%
-% algorithm time
-k = 4; % number of classes
-centroids = rand(k, 3); % randomly generate centroids in HV
-
-for kk=1:100
-    cluster1 = [];
-    cluster2 = [];
-    cluster3 = [];
-    cluster4 = [];
-
-    for i=1:h
-        for j=1:w
-
-            % identify classes in image
-            distances = zeros(k, 1);
-            for ii=1:k
-                distances(ii) = norm(squeeze(imHSV(i, j, :)) - centroids(ii,:), 2);
-                [M, I] = min(distances); 
-                if I==1
-                    cluster1 = [cluster1 squeeze(imHSV(i, j, :))];
-                end
-                if I==2
-                    cluster2 = [cluster2 squeeze(imHSV(i, j, :))];
-                end
-                if I==3
-                    cluster3 = [cluster3 squeeze(imHSV(i, j, :))];
-                end
-                if I==4
-                    cluster4 = [cluster4 squeeze(imHSV(i, j, :))];
-                end
-            end
-
-            
-        end
-    end
-
-    % compute new centroids
-    centroids = [
-        mean(cluster1, 2)'
-        mean(cluster2, 2)'
-        mean(cluster3, 2)'
-        mean(cluster4, 2)'
-    ];
-    convergence = 0;
-    
-end
-
-%%
-figure, scatter3(cluster1(1,:), cluster1(2,:), cluster1(3,:))
-figure, scatter3(cluster2(1,:), cluster2(2,:), cluster2(3,:))
-figure, scatter3(cluster3(1,:), cluster3(2,:), cluster3(3,:))
-figure, scatter3(cluster4(1,:), cluster4(2,:), cluster4(3,:))
 
