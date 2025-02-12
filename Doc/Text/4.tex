@@ -6,7 +6,11 @@
 \textit{Enumerate main supervized classiﬁcation techniques and describe them in few lines.}
 
 %~~~~~~~~~~~~~~ANSWER~~~~~~~~~~~~~~
-Supervised Classification is... ???
+Supervised Classification is one of the two broad types of digital classification methods used by the majority of image processing systems to analyse remote sensing images. It requires selection of an appropriate classification scheme, and then identification of training areas in the image that best represents each class. In supervised classification, the analyst identifies in the image homogenous representative areas of different land use and land cover types (information classes) of interest. These are called \textit{training areas} or \textit{training samples}. 
+
+The three distinct stages of Supervised Classification are training, classification and output. Training is the identification of a sample of pixels of known classes gathered from reference data, such as field visits, existing maps, reports and aerial photographs. These could be e.g. water, sand, dirt, roads, clouds etc. The key characteristics of selecting training areas are shape, location, number and uniformity.
+
+
 
 Some typical Supervised Classification techniques are listed and described below:
 \begin{enumerate}
@@ -23,7 +27,7 @@ Some typical Supervised Classification techniques are listed and described below
     \end{equation*}
 
     
-    \item Bayesian Classification:
+    \item \textbf{Bayesian Classification:}
     Based on the bayesian rule where given an observation \textit{o}, the \textit{prior} (a priori probability), is described as:
     \begin{equation*}
         P(C_i \mid o) = \frac{P(o \mid C_i) P(C_i)}{P(o)}
@@ -47,12 +51,12 @@ Some typical Supervised Classification techniques are listed and described below
     An example of Linear Classification is the Perceptron Algorithm, which bla bla
     
     
-    \item Neural Networks:
-    \item Decision Trees:
-    \item Concept Lattices:
-    \item Support Vector Machine
-    \item Random Forests:
-    \item etc.
+    \item \textbf{Neural Networks:}
+    \item \textbf{Decision Trees:}
+    \item \textbf{Concept Lattices:}
+    \item \textbf{Support Vector Machine}
+    \item \textbf{Random Forests:}
+    \item \textbf{etc.}
 \end{enumerate}
 
 
@@ -147,10 +151,22 @@ on 'Spain Beach' image or another of your choice}
 
 
 
-
+% ~~~~~~~~~~~~~~ UNSUPERVISED CLASSIFICATION ~~~~~~~~~~~~~~~~~~
+\newpage
 \subsection{Unsupervised Classification}
 \textcolor{blue}{\textbf{Question 4:}}
 \textit{Enumerate main unsupervized classiﬁcation techniques and describe them in few lines.}
+
+Unsupervised Classification in essence reverses the process of supervised classification. It requires less input from the analyst to process the image, as the analyst does not predefined the land use and land cover types. However, the analyst can define the number of output classes required and spectral variance (such as the standard deviation, $\sigma$) within each class. The image is divided into those defined number of classes based entirely on the spectral data and with no prior knowledge of what land use and land cover types may be present in the image. 
+
+\begin{itemize}
+    \item \textbf{Clustering} 
+    \subitem \textit{K-Means Algorithm}
+    \subitem \textit{Kohonen Maps}
+    \item \textbf{Regression}
+    \item \textbf{Dimension Reduction}
+    \subitem \textit{Principal Component Analysis} is the most efficient method for Dimension Reduction. It is based on the variance / covariance matrix, where the main eigenvalues are the most important. Associated eigenvectors describe the reduced state space.
+\end{itemize}
 
 
 \textcolor{blue}{\textbf{Question 5:}}
@@ -161,3 +177,27 @@ on 'Spain Beach' image or another of your choice}
     \item PCA technique to reduce the size of an image
 \end{enumerate}
 }
+
+Principal Component Analysis (PCA)
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+    \centering
+        \includegraphics[width=\linewidth]{Doc/Graphics/Part4/PCA_im_original.png}
+        \caption{Original}
+    \end{subfigure}
+    \begin{subfigure}{0.45\textwidth}
+    \centering
+        \includegraphics[width=\linewidth]{Doc/Graphics/Part4/PCA_im_reconstructed.png}
+        \caption{Reconstructed}
+    \end{subfigure}
+    \caption{PCA compression}
+    \label{fig:enter-label}
+\end{figure}
+
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\linewidth]{Doc/Graphics/Part4/kMeans_comparison.png}
+    \caption{k-means clustering tests}
+    \label{fig:enter-label}
+\end{figure}
