@@ -61,10 +61,80 @@ Some typical Supervised Classification techniques are listed and described below
 \textit{Apply and compare the following algorithms:
 \begin{enumerate}
     \item 1-NN (your programme)
-    \item Neural Network
+    \item Neural Network    
 \end{enumerate}
-on 'Spain Beach' image or another of your choice
-}
+on 'Spain Beach' image or another of your choice}
+
+\begin{enumerate}
+    \item 1-NN 
+
+    The first step is to select the data for our classes, which we select at random in predefined areas for 'land', 'beach', 'foam' and 'ocean' classes.
+    \begin{figure}[!ht]
+        \centering
+        \includegraphics[width=0.45\linewidth]{Doc/Graphics/Part4/kNN_training_sets.png}
+        \caption{Randomly selected training data}
+    \end{figure}
+
+    The output of the algorithm gives us the beach we want to extract
+    \begin{figure}[!ht]
+        \centering
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{Doc/Graphics/Part4/kNN_classified_beach.png}
+            \caption{Raw output}
+        \end{subfigure} \hfill
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{Doc/Graphics/Part4/kNN_masked_beach.png}
+            \caption{Smoothened output}
+        \end{subfigure}
+        \caption{Extracted beach}
+        \label{fig:enter-label}
+    \end{figure}  
+    \FloatBarrier
+    
+    \item Neural Network
+    
+    We select two sets of training data, which gives us two classes: 'beach' and 'not beach'. 
+    \begin{figure}[!ht]
+        \centering
+        \begin{subfigure}{0.2\textwidth}
+            \centering
+            \includegraphics[width=\textwidth, angle=90]{Doc/Graphics/Part4/training_set_beach.png}
+            \caption{Beach}
+        \end{subfigure}
+        \begin{subfigure}{0.4\textwidth}
+            \centering
+            \includegraphics[width=0.5\textwidth, angle=90]{Doc/Graphics/Part4/training_set_other.png}
+            \caption{Not beach}
+        \end{subfigure}
+        \caption{Training sets}
+    \end{figure}
+    \FloatBarrier
+
+    The target assigned to beach RGB values is 1 and 0 for the rest. Training the network goes smoothly, and its output results in the following extraction of the beach:
+    \begin{figure}[!ht]
+        \centering
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{Doc/Graphics/Part4/nn_classified_beach.png}
+            \caption{Raw output}
+        \end{subfigure} \hfill
+        \begin{subfigure}{0.45\textwidth}
+            \centering
+            \includegraphics[width=\textwidth]{Doc/Graphics/Part4/nn_masked_beach.png}
+            \caption{Smoothened output}
+        \end{subfigure}
+        \caption{Extracted beach}
+        \label{fig:enter-label}
+    \end{figure}
+    \FloatBarrier
+
+    \item Comparison
+
+    There are two noticeable differences: speed and noise level. The neural network is much more performant in terms of speed and produces an output with much less noise and better classification (like the river delta in the top right corner).
+\end{enumerate}
+
 
 
 \textcolor{blue}{\textbf{Question 3:}}
