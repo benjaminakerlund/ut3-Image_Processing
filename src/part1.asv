@@ -397,39 +397,38 @@ ft_spectrum = abs(ft_horizontal_stripes);
 
 figure Name 'Part1_Question13' FileName 'Part1_Question13'
 sgtitle('FT of rectangles and disks')
-subplot(2,3,1), imshow(image), title('Original');
-subplot(2,3,2), imagesc(ft_spectrum), colorbar, title('FT spectrum');
-subplot(2,3,3), imagesc(log(abs(ft_spectrum))), colorbar, title('FT log spectrum');
+subplot(2,3,1), imshow(image);
+subplot(2,3,2), imshow(ft_spectrum);
+subplot(2,3,3), imagesc(log(abs(ft_spectrum))), colorbar;
 
 image = circle(width, height, radius);
 ft_horizontal_stripes = fft2(image, width, height);
 ft_horizontal_stripes = fftshift(ft_horizontal_stripes);
 ft_spectrum = abs(ft_horizontal_stripes);
 
-subplot(2,3,4), imshow(image), title('Original');
-subplot(2,3,5), imagesc(ft_spectrum), colorbar, title('FT spectrum');
-subplot(2,3,6), imagesc(log(abs(ft_spectrum))), colorbar, title('FT log spectrum');
+subplot(2,3,4), imshow(image)
+subplot(2,3,5), imshow(ft_spectrum);
+subplot(2,3,6), imagesc(log(abs(ft_spectrum)));
 
-% Stripes
+
 figure, sgtitle('FT of stripes')
 image = horizontal_stripes(width, height, stripe_width);
 ft_horizontal_stripes = fft2(image, width, height);
 ft_horizontal_stripes = fftshift(ft_horizontal_stripes);
 ft_spectrum = abs(ft_horizontal_stripes);
 
-subplot(2,2,1), imshow(image), title('Original');
-subplot(2,2,2), imagesc(ft_spectrum), title('FT spectrum');
+subplot(2,2,1), imshow(image);
+subplot(2,2,2), imagesc(ft_spectrum);
 
 image = vertical_stripes(width, height, stripe_width);
 ft_horizontal_stripes = fft2(image, width, height);
 ft_horizontal_stripes = fftshift(ft_horizontal_stripes);
 ft_spectrum = abs(ft_horizontal_stripes);
 
-subplot(2,2,3), imshow(image), title('Original');
-subplot(2,2,4), imagesc(log(abs(ft_spectrum))), title('FT spectrum');
+subplot(2,2,3), imshow(image);
+subplot(2,2,4), imagesc(log(abs(ft_spectrum)));
 
 %% Question 14: FT spectrum of blurred image
-clc; clear; close all;
 
 %% Question 15: Extraction of field
 clc; clear all; close all;
