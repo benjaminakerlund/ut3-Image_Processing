@@ -5,7 +5,7 @@
 \usepackage{a4wide}
 
 \usepackage{fancyhdr}                  % headers and footers
-\usepackage{graphicx, placeins, subfig, float, floatflt, wrapfig}         % Required for inserting images
+\usepackage{graphicx, placeins, subcaption, float, floatflt, wrapfig, placeins}         % Required for inserting images
 \usepackage{amsmath,amsfonts,amssymb, bm} % math
 \usepackage{siunitx}                   % typing values with units
 \usepackage{biblatex}
@@ -18,6 +18,8 @@
 \usepackage{lipsum} % sample text
 \usepackage{listings} % Including code into file
 \usepackage{color}
+
+\usepackage{verbatim}   % comment blocks
 
 \usepackage{pdfpages} % Include pdf pages 
 
@@ -37,7 +39,6 @@
 }
 
 \usepackage[toc,page]{appendix} % For appendices
-
 
 
 % Setup for page numbering so far
@@ -81,7 +82,7 @@
 \addcontentsline{toc}{section}{References}
 \section*{References}
 \label{sec:references}
-\printbibliography[heading=none]
+\printbibliography
 
-\include{Text/Appendix}
+%\include{Text/Appendix}
 \end{document}

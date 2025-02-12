@@ -246,7 +246,7 @@ figure Name 'Part1_Question6b' FileName 'Part1_Question6b'
 sgtitle('Grayscale of the HSV colorspace image')
 imshow(rgb2gray(hsv2rgb(I_hsv)))
 
-%% Question 7
+% Question 7
 % What are the values of \alpha, \beta and \gamma?
 
 
@@ -266,6 +266,50 @@ sgtitle('Isolating the beach')
 subplot(1,3,1), imshow(RGB), title('Original Image')
 subplot(1,3,2), imshow(rgb2hsv(RGB)), title('Filtered Image')
 subplot(1,3,3), imshow(mask), title('Isolated Beaches')
+
+%% Question 9
+clc; clear; close all;
+
+% Create grayscale image and plot histogram
+A = repmat(linspace(0,1,1000),500,1);
+A(220:280,:) = 0.5;
+figure, sgtitle('Grayscale illusion and histogram')
+subplot(1,2,1), imshow(A), title('Grayscale Illusion')
+subplot(1,2,2), histogram(A)
+
+%% Question 10
+clc; clear; close all;
+imagex = imread('../BE1_IntroComputerVision/imagex.bmp');
+imagexx = imread('../BE1_IntroComputerVision/imagexx.bmp');
+
+% convert to hsv
+% imagex_hsv = rgb2hsv(imagex);
+% imagexx_hsv = rgb2hsv(imagexx);
+
+% Show R, G and B components?
+[imagex_R, imagex_G, imagex_B] = deal(imagex);
+[imagexx_R, imagexx_G, imagexx_B] = deal(imagexx);
+
+imagex_R(:, :, 2:3) = 0; 
+imagex_G(:, :, [1 3]) = 0; 
+imagex_B(:, :, 1:2) = 0;
+imagexx_R(:, :, 2:3) = 0; 
+imagexx_G(:, :, [1 3]) = 0;
+imagexx_B(:, :, 1:2) = 0;
+
+% Plots
+figure, sgtitle('Imagex and Imagexx being worked?')
+subplot(2,5,1), imshow(imagex), title('Original')
+subplot(2,5,2), histogram(imagex), title('Histogram')
+subplot(2,5,3), imshow(imagex_R), title('R')
+subplot(2,5,4), imshow(imagex_G), title('G')
+subplot(2,5,5), imshow(imagex_B), title('B')
+
+subplot(2,5,6), imshow(imagexx), title('Original')
+subplot(2,5,7), histogram(imagexx), title('Histogram')
+subplot(2,5,8), imshow(imagexx_R), title('R')
+subplot(2,5,9), imshow(imagexx_G), title('G')
+subplot(2,5,10), imshow(imagexx_B), title('B')
 
 %% Question 13
 clc; clear; close all;
