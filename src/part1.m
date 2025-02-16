@@ -328,7 +328,6 @@ subplot(2,5,10), imshow(imagexx_B), title('B')
 %% Question 11: Filtering and Edge filtering on stripes and real image
 clc; clear; close all;
 
-
 % Parameters
 width = 512;
 height = 512;
@@ -336,7 +335,6 @@ stripe_width = 32;
 radius = 32;
 rect_w = 64;
 rect_h = 32;
-
 
 % STRIPES
 image = horizontal_stripes(width, height, stripe_width);
@@ -365,9 +363,19 @@ subplot(2,5,9), imshow(imT_edge_P), title('Prewitt')
 subplot(2,5,10), imshowpair(imT_edge_C, imT_edge_P), title('combined techniques')
 
 % REAL IMAGE
-% image =
-%figure, sgtitle('Blur- and Edge Filtering on real image')
+im = imread('../BE1_IntroComputerVision/champs.png');
+im = rgb2gray(im);
+h = fspecial("motion", 50, 45);
+im_filtered = imfilter(im, h);
+im_edge_C = edge(im, "Canny");
+im_edge_P = edge(im, "Prewitt");
 
+figure, sgtitle('Blur- and Edge Filtering on real image')
+subplot(1,5,1), imshow(im), title('Original')
+subplot(1,5,2), imshow(im_filtered'), title('Blur filtered')
+subplot(1,5,3), imshow(im_edge_C), title('Canny')
+subplot(1,5,4), imshow(im_edge_P), title('Prewitt')
+subplot(1,5,5), imshowpair(im_edge_C, im_edge_P), title('combined techniques')
 
 
 %% Question 12: Isolation of stars
