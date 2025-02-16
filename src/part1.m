@@ -504,24 +504,48 @@ subplot(2,3,6), imagesc(log(abs(ft_spectrum))), colorbar, title('FT log spectrum
 
 % Stripes
 figure, sgtitle('FT of stripes')
-image = horizontal_stripes(width, height, stripe_width);
-ft_horizontal_stripes = fft2(image, width, height);
+stripes_h = horizontal_stripes(width, height, stripe_width);
+ft_horizontal_stripes = fft2(stripes_h, width, height);
 ft_horizontal_stripes = fftshift(ft_horizontal_stripes);
 ft_spectrum = abs(ft_horizontal_stripes);
 
-subplot(2,2,1), imshow(image), title('Original');
+subplot(2,2,1), imshow(stripes_h), title('Original');
 subplot(2,2,2), imagesc(ft_spectrum), title('FT spectrum');
 
-image = vertical_stripes(width, height, stripe_width);
-ft_horizontal_stripes = fft2(image, width, height);
+stripes_v = vertical_stripes(width, height, stripe_width);
+ft_horizontal_stripes = fft2(stripes_v, width, height);
 ft_horizontal_stripes = fftshift(ft_horizontal_stripes);
 ft_spectrum = abs(ft_horizontal_stripes);
 
-subplot(2,2,3), imshow(image), title('Original');
+subplot(2,2,3), imshow(stripes_v), title('Original');
 subplot(2,2,4), imagesc(log(abs(ft_spectrum))), title('FT spectrum');
 
-%% Question 14: FT spectrum of blurred image
-clc; clear; close all;
+
+% Question 14: FT spectrum of blurred image
+figure, sgtitle('Stripes blurring with different kernels and analysis')
+
+h = fspecial("motion", 50, 45);
+h_blur = imfilter(stripes_h, h);
+v_blur = imfilter(stripes_v, h);
+
+ft_horizontal_stripes = fft2(h_blur, width, height);
+ft_horizontal_stripes = fftshift(ft_horizontal_stripes);
+ft_spectrum_h = abs(ft_horizontal_stripes);
+
+ft_vert_stripes = fft2(v_blur, width, height);
+ft_vert_stripes = fftshift(ft_vert_stripes);
+ft_spectrum_v = abs(ft_vert_stripes);
+
+subplot(2,4,1), imshow(stripes_h);
+subplot(2,4,2), imshow(h_blur);
+subplot(2,4,3), imshow(fft2(h_blur))
+subplot(2,4,4), imshow(ft_spectrum_h)
+
+subplot(2,4,5), imshow(stripes_v);
+subplot(2,4,6), imshow(v_blur),
+subplot(2,4,7), imshow(fft2(v_blur))
+subplot(2,4,8), imshow(ft_spectrum_v)
+
 
 %% Question 15: Extraction of field
 clc; clear all; close all;
@@ -601,3 +625,26 @@ title("Filtered Image")
 subplot(1,3,3)
 imagesc(uint8(im_filtered))
 title("Extracted Field")
+
+
+%% Question 16
+clc; clear; close all;
+
+%% Question 17
+clc; clear; close all;
+
+%% Question 18
+clc; clear; close all;
+
+%% Question 19
+clc; clear; close all;
+
+%% Question 20
+clc; clear; close all;
+
+%% Question 21
+clc; clear; close all;
+
+
+
+% FIN
