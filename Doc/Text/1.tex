@@ -88,7 +88,20 @@ Exercises for \textit{BE1\_IntroComputerVision} practical.
 \textbf{Question 7:}
 \textit{What are the values of $\alpha$, $\beta$ and $\gamma$?}
 
-\TODO{}
+$\alpha$ and $\beta$ are values used to describe an image's contrast and brightness, respectively. 
+A higher contrast value (>1) increases the difference between pixel values making dark areas darker and bright areas brighter, while a lower value does the opposite. A positive brightness value makes the image brighter by adding intensity, while a negative value makes it darker.
+In a linear transformation of an image, the pixel intensities can be modified with the following equation:
+\[
+I_{\text{new}}(x, y) = \alpha \cdot I_{\text{old}}(x, y) + \beta
+\]
+
+$\gamma$ correction is a nonlinear transformation applied to an image to adjust both brightness and contrast such that a higher gamma value makes the image darker and a lower value makes it brighter. The formula for gamma correction in the normalised form, i.e., in range [0,1], is:
+\[
+I_{\text{new}}(x, y) = I_{\text{old}}(x, y)^\gamma
+\]
+
+An example of both forms of correction can be seen in the figure below:
+
 
 
 \newpage
@@ -131,13 +144,28 @@ If we take the histogram of the Grayscale illusion we can see that the color val
 
 
 \subsubsection{Filtering}
+\textit{Filtering can be associated to blur and to edge detection. Commands \texttt{imfilter} and \texttt{fspecial} can be used to respectively ﬁlter images and deﬁne kernel (which can be also deﬁned as a matrix).}
+
+
 \textbf{Question 11:}
 \textit{Apply blur Filtering and Edge ﬁltering on the Stripes images and on a ’real’ image. What are the main associated Kernels ?}
+
+\TODO{add pic}
+
+
+Main associated Kernels:
+\TODO{}
 
 
 
 \textbf{Question 12:}
 \textit{Thanks to successive ﬁltering operators, isolate the main 5 stars of the image Etoiles.png.}
+
+The process to isolate the 5 largest stars can be to first convert the image to grayscale, then smooth the image with a Gaussian filter, then binarise it with an adaptive threshold and finally apply a median filter to remove "salt-and-pepper noise". A comparison was made between a more complicated and simpler approach and the results of the better approaches can be seen below:
+
+\TODO{add pic}
+
+
 
 
 \subsection{Fourier Transform}
