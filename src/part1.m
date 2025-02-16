@@ -62,14 +62,6 @@ for i = 1:size(D,1)
     end
 end
 
-% F = repmat(0,500,500);
-% for i = 1:10
-%     numb = i*50 -25;
-%     numb2 = numb+25;
-%     F(numb:numb2,:) = 1;
-% end
-
-
 % Plot Stripes
 figure Name 'Part1_Question3a' FileName 'Part1_Question3a'
 sgtitle('Stripes')
@@ -246,8 +238,30 @@ figure Name 'Part1_Question6b' FileName 'Part1_Question6b'
 sgtitle('Grayscale of the HSV colorspace image')
 imshow(rgb2gray(hsv2rgb(I_hsv)))
 
-% Question 7
+%% Question 7
 % What are the values of \alpha, \beta and \gamma?
+clc; clear; close all;
+im = imread('../BE1_IntroComputerVision/cargo.jpg');
+im_double = im2double(im);
+
+alpha = 1.9;
+beta = 0.3;
+gamma = 2.2;
+
+im_a_adjusted = alpha*im_double;
+im_b_adjusted = im_double + beta;
+im_ab_adjusted = alpha * im_double + beta;
+im_ab_adjusted = min(max(im_ab_adjusted, 0), 1);
+im_g_adjusted = im_double .^ gamma;
+im_abg_adjusted = im_ab_adjusted .^ gamma;
+
+figure, sgtitle('\alpha, \beta and \gamma correction')
+subplot(2,3,1), imshow(im_double), title('original')
+subplot(2,3,2), imshow(im_a_adjusted), title(['\alpha increased by \alpha='  num2str(alpha)]);
+subplot(2,3,3), imshow(im_b_adjusted), title(['\beta increased by \beta=' num2str(beta)]);
+subplot(2,3,4), imshow(im_ab_adjusted), title('\alpha and \beta adjusted')
+subplot(2,3,5), imshow(im_g_adjusted), title(['\gamma increased by \gamma =' num2str(gamma)])
+subplot(2,3,6), imshow(im_abg_adjusted), title('\alpha, \beta and \gamma adjusted')
 
 
 %% Question 8
@@ -311,15 +325,85 @@ subplot(2,5,8), imshow(imagexx_R), title('R')
 subplot(2,5,9), imshow(imagexx_G), title('G')
 subplot(2,5,10), imshow(imagexx_B), title('B')
 
-%% Question 11: Filtering and Edge ffiltering on stripes and real image
+%% Question 11: Filtering and Edge filtering on stripes and real image
 clc; clear; close all;
 
-% Do something??
+
+% Parameters
+width = 512;
+height = 512;
+stripe_width = 32;
+radius = 32;
+rect_w = 64;
+rect_h = 32;
+
+
+% STRIPES
+image = horizontal_stripes(width, height, stripe_width);
+image_T = image';
+
+h = fspecial("motion", 50, 45);
+image_filtered = imfilter(image, h);
+image_edge_C = edge(image, "Canny");
+image_edge_P = edge(image, "Prewitt");
+
+imT_filtered = imfilter(image_T, h);
+imT_edge_C = edge(image_T, "Canny");
+imT_edge_P = edge(image_T, "Prewitt");
+
+figure, sgtitle('Blur- and Edge Filtering on stripes')
+subplot(2,5,1), imshow(image), title('Original')
+subplot(2,5,2), imshow(image_filtered), title('Blur filtered')
+subplot(2,5,3), imshow(image_edge_C), title('Canny')
+subplot(2,5,4), imshow(image_edge_P), title('Prewitt')
+subplot(2,5,5), imshowpair(image_edge_C, image_edge_P), title('Combined techniques')
+
+subplot(2,5,6), imshow(image_T), title('Original')
+subplot(2,5,7), imshow(imT_filtered'), title('Blur filtered')
+subplot(2,5,8), imshow(imT_edge_C), title('Canny')
+subplot(2,5,9), imshow(imT_edge_P), title('Prewitt')
+subplot(2,5,10), imshowpair(imT_edge_C, imT_edge_P), title('combined techniques')
+
+% REAL IMAGE
+% image =
+%figure, sgtitle('Blur- and Edge Filtering on real image')
+
+
 
 %% Question 12: Isolation of stars
 clc; clear; close all;
+imo = imread('../BE1_IntroComputerVision/Etoiles.png');
+im = rgb2gray(imo);
 
-% Do something?
+% inspect a patch of the image containing noise
+patch = imcrop(im); close;
+
+% Compute variance of patch, which approximates variance of the noise
+patchvar = std2(patch)^2;
+
+% Define Degree of smoothing
+DoS = 4*patchvar;
+J = imbilatfilt(im, DoS,25);
+
+figure, sgtitle('Isolating 5 biggest stars with multiple filters')
+subplot(1,4,1), imshow(im), title('Original in BW')
+subplot(1,4,2), imshow(J), title('Gaussian filter to smooth image')
+
+level = graythresh(J);
+J_BW = imbinarize(J, level);
+subplot(1,4,3), imshow(J_BW), title("Binarising with adaptive thresholding")
+
+% Median filter to remove salt-and-pepper noise
+im_median = medfilt2(J_BW, [25 25]);
+subplot(1,4,4), imshow(im_median), title('Median filter to remove salt-and-pepper noise')
+
+
+figure, sgtitle({'Comparison plot with only', 'binarising and median filtering'})
+subplot(1,2,1), imshow(imo), title('Original in RGB')
+im = imbinarize(im);
+im = medfilt2(im, [30 30]);
+subplot(1,2,2), imshow(im), title('Filtered image')
+
 
 %% Question 13: FT spectrum of geometric shapes and patterns
 clc; clear; close all;
