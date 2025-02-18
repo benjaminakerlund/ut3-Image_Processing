@@ -521,10 +521,16 @@ subplot(2,2,3), imshow(stripes_v), title('Original');
 subplot(2,2,4), imagesc(log(abs(ft_spectrum))), title('FT spectrum');
 
 
-% Question 14: FT spectrum of blurred image
-figure, sgtitle('Stripes blurring with different kernels and analysis')
 
-h = fspecial("motion", 50, 45);
+%% Question 14: FT spectrum of blurred image
+% Kernels: Motion, Gaussian and Log
+    % Motion gives ... w/ parameters 45 and 53. Weird values w/ default params
+    % Gaussian gives cool shift in fft with default params
+    % log gives...
+
+close all; kernel = "log"
+figure, sgtitle('Stripes blurring with ' + kernel + ' kernel')
+h = fspecial(kernel);
 h_blur = imfilter(stripes_h, h);
 v_blur = imfilter(stripes_v, h);
 
@@ -536,16 +542,46 @@ ft_vert_stripes = fft2(v_blur, width, height);
 ft_vert_stripes = fftshift(ft_vert_stripes);
 ft_spectrum_v = abs(ft_vert_stripes);
 
-subplot(2,4,1), imshow(stripes_h);
-subplot(2,4,2), imshow(h_blur);
-subplot(2,4,3), imshow(fft2(h_blur))
-subplot(2,4,4), imshow(ft_spectrum_h)
+subplot(2,4,1), imshow(stripes_h), title('Original')
+subplot(2,4,2), imshow(h_blur), title('Blurred w/ default params'), %title('Blurred w/ len=45 and \theta=53')
+subplot(2,4,3), imshow(fft2(h_blur)), title('fft2 of blurred')
+subplot(2,4,4), imagesc(ft_spectrum_h), title({'fft2, fftshift and abs', 'of blurred'})
 
-subplot(2,4,5), imshow(stripes_v);
-subplot(2,4,6), imshow(v_blur),
-subplot(2,4,7), imshow(fft2(v_blur))
-subplot(2,4,8), imshow(ft_spectrum_v)
+subplot(2,4,5), imshow(stripes_v), title('Original')
+subplot(2,4,6), imshow(v_blur), title('Blurred w/ default params'), %title('Blurred w/ len=45 and \theta=53')
+subplot(2,4,7), imshow(fft2(v_blur)), title('fft2 of blurred')
+subplot(2,4,8), imagesc(ft_spectrum_v), title({'fft2, fftshift and abs', 'of blurred'})
 
+
+%% Rectangle and Circle
+close all; kernel = "log";
+h = fspecial(kernel); 
+% gaussian does not rly work
+% motion gives a slight blur
+% laplacian an log basically does edge detection...
+
+im_o = rectangle(width, height, rect_w, rect_h);
+image = imfilter(im_o, h);
+ft_rectangle = fft2(image, width, height);
+ft_rectangle = fftshift(ft_rectangle);
+ft_spectrum = abs(ft_rectangle);
+
+figure, sgtitle('Rectangle and disc blurring with ' + kernel + ' kernel')
+subplot(2,4,1), imshow(im_o), title('Original');
+subplot(2,4,2), imshow(image), title('Blurred')
+subplot(2,4,3), imshow(fft2(image)), title('fft2 of blurred'), %title('Blurred w/ len=45 and \theta=53') %
+subplot(2,4,4), imagesc(ft_spectrum), colorbar, title({'fft2, fftshift and abs', 'of blurred'});
+
+im_o = circle(width, height, radius);
+image = imfilter(im_o, h);
+ft_circle = fft2(image, width, height);
+ft_circle = fftshift(ft_horizontal_stripes);
+ft_spectrum= abs(ft_horizontal_stripes);
+
+subplot(2,4,5), imshow(im_o), title('Original');
+subplot(2,4,6), imshow(image), title('Blurred')
+subplot(2,4,7), imshow(fft2(image)), title('fft2 of blurred'), %title('Blurred w/ len=45 and \theta=53') %
+subplot(2,4,8), imagesc(abs(ft_spectrum)), colorbar, title({'fft2, fftshift and abs', 'of blurred'});
 
 %% Question 15: Extraction of field
 clc; clear all; close all;
@@ -639,12 +675,3 @@ clc; clear; close all;
 %% Question 19
 clc; clear; close all;
 
-%% Question 20
-clc; clear; close all;
-
-%% Question 21
-clc; clear; close all;
-
-
-
-% FIN
