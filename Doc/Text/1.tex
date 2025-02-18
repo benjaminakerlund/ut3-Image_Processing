@@ -223,9 +223,35 @@ The process to isolate the 5 largest stars can be to first convert the image to 
 % Subsection: Deblurring
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \subsection{Deblurring}
+In this section, we will see some examples of image deblurring algorithms through linear modelization.
+
+The main sources of blur in an image are:
+\begin{itemize}
+    \item Bad focalization,
+    \item Moving blur,
+    \item Atmospheric turbulence,
+    \item etc.
+\end{itemize}
+
 \subsubsection{Linear Modelization}
+
+As a first approximation, a blurred image can be modelled as follows:
+\begin{equation}
+    Y = H * I + B
+\end{equation}
+where:
+\begin{itemize}
+    \item $Y$ is the blurred image to be restored,
+    \item $H$ is the convolution kernel,
+    \item $I$ is the original image to be estimated,
+    \item $B$ is Gaussian additive noise.
+\end{itemize}
+
 \textbf{Question 16:}
 \textit{Why do we have chosen this model? What are the limits of this model with respect to a single lens model?}
+
+\textit{Load the image of Toulouse (\textbf{toulouse.bmp}), blur this image with a $(2T+1)$-sized square kernel (Typically $T = 3$). The convolution kernel is thus $h(x,y) = \alpha$ if $|x| \leq T$ and $|y| \leq T$, with $\alpha = \frac{1}{(2T+1)^2}$.
+}
 
 \TODO{}
 
@@ -235,20 +261,61 @@ The process to isolate the 5 largest stars can be to first convert the image to 
 \TODO{}
 
 \subsubsection{Blur Estimation}
+The objective is here to estimate a posteriori the value of $T$, \textit{i.e.} from the blurred image.
+
+\noindent In dim 1, $h(x) = \sqrt{\alpha}$ if $|x| \leq T$. The DFT is
+
+\[
+\mathcal{H}(u) = \sum_{x=-T}^{+T} h(x)e^{-j 2\pi \frac{ux}{N}} = \frac{1}{2T+1} \sum_{x=-T}^{+T} w^x
+\]
+
+However,
+
+\[
+\sum_{x=-T}^{+T} w^x = \frac{w^{-T} - w^{T+1}}{1 - w} = \frac{w^{-T-\frac{1}{2}} - w^{T+\frac{1}{2}}}{w^{-\frac{1}{2}} - w^{\frac{1}{2}}}
+\]
+
+Thus,
+
+\[
+\mathcal{H}(u) = \frac{1}{2T+1} \frac{\sin\left(2\pi \frac{u}{N} (T + \frac{1}{2})\right)}{\sin\left(\pi \frac{u}{N}\right)}
+\]
+
+In this case, $N = 512$, $u = -512 \dots 512$. In dim 2, $h(x,y) = h(x)h(y)$.
+
 \textbf{Question 18:}
 \textit{Propose a cardinal sinus function that have the same zeros than H(u) (superpose the two functions). What conclusion could you give from these properties? Could you estimate T ?}
 
 \TODO{}
 
-\textbf{Question 19:}
-\textit{Estimate T.}
+\textit{Compare the original image spectrum and the blurred image spectrum (using eventually the log function):}
+
+
+
+\textbf{Question 19:} \textit{Estimate T.}
 
 \TODO{}
 
 
 \subsubsection{Image Deblurring}
 
-The following program allows to apply this process (Inverse Filtering -> Wiener Filtering):
+Now, image deblurring (or image restoration) can be done using multiple methods. We focus on two of them:
+\begin{itemize}
+    \item Inverse Filtering: \TODO{What is this?}
+    \item Wiener Filtering: \TODO{What is this?}
+\end{itemize}
+
+Let $g(x, y)$ be the inverse filter of $h(x, y)$. In the spectral domain, we have:
+\begin{equation}
+    G = \frac{1}{H}
+\end{equation}
+
+The estimated restored image $\hat{I}$ is:
+\begin{equation}
+    \hat{I} = GY = GHI + GB = I + GB
+\end{equation}
+
+The following program allows to apply this process:
 \begin{lstlisting}
     SeuilMax = 11 ;
     hh = zeros(TailleImage);
@@ -275,9 +342,20 @@ The following program allows to apply this process (Inverse Filtering -> Wiener 
 \textbf{Question 20:}
 \textit{Complete this program (only 2 lines!) to process inverse ﬁltering method.}
 
-\TODO{}
+The full code is provided in the same source code directory in the \texttt{Restauration\_ToBeCompleted.m} file. 
+The two lines to complete this program (with some small other adjustments) can be seen in the \textit{Restauration.m} file in this directory on lines 106 and 107 -- and below:
+\begin{lstlisting}
+    TFdIrest = G.*TFdIf;
+    Irest = real(ifft2(TFdIrest));
+\end{lstlisting}
+
 
 \textbf{Question 21:}
 \textit{What’s happen with the image marcheur.jpg ?}
 
-\TODO{}
+\TODO{change }
+
+
+
+
+
