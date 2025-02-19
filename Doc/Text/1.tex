@@ -153,8 +153,17 @@ If we take the histogram of the Grayscale illusion we can see that the color val
 \textbf{Question 11:}
 \textit{Apply blur Filtering and Edge ﬁltering on the Stripes images and on a ’real’ image. What are the main associated Kernels ?}
 
-Main associated Kernels:
-\TODO{}
+The kernel options for the \texttt{fspecial()} function are:
+Average, Disk, Gaussian, Laplacian, Log, Motion, Prewitt, and Sobel. For Edge detection, it is easier to use the \texttt{edge()} function in MatLab, which has the following methods: Sobel, Prewitt, Roberts, Log, Zerocross, Canny and Approxcanny.
+
+The Disk and Motion kernels seem to work best for blurring the stripes images and the Gaussian did not seem to do much. However, the Motion kernel required specific parameters of length and $\theta$ while all tests for other kernels were done with default parameters. The Laplacian and Log kernels seemed to blur everything other than the edges of the stripes, and not even blurring, but not showing anything else just like an edge detection function would. 
+The Prewitt and Sobel kernels performed similarly to no surprise as they are edge detection algorithms, however, they did not particularly work for the horizontal stripes.
+When applied on a real image, all of these kernels seem to do a decent job at blurring the image. 
+
+For edge detection, the Canny method clearly performs best. For some cases, a combination of the Prewitt and Sobel kernels seemed to perform similarly well, while a combination of the Prewitt and Canny methods gave interesting "green" results.
+
+Different blurring and edge detection kernel- and method options applied on both the stripes image and a real image (\texttt{Champs.jpg})) can be seen in the image below. In particular the Motion kernel for blurring and the Canny and Prewitt methods for edge detection as well as a combination of the two latter methods showing the strange green results.
+
 
 \begin{figure}[H]
     \centering
@@ -165,6 +174,7 @@ Main associated Kernels:
     \centering
     \includegraphics[width=\linewidth]{Doc/Graphics/Part1/Q11b.png}
 \end{figure}
+
 
 \textbf{Question 12:}
 \textit{Thanks to successive ﬁltering operators, isolate the main 5 stars of the image Etoiles.png.}
@@ -204,8 +214,39 @@ The process to isolate the 5 largest stars can be to first convert the image to 
 \textbf{Question 14:}
 \textit{Blur the image with diﬀerent kernels and interpret the spectrum.}
 
-\TODO{Work in progress, see code, don't rely know what he is after here...}
+\textbf{Stripes:}
+An analysis of the different blurring kernel option performances can be seen in the answer for \textit{Question 12. The FT on the other hand...}
+\TODO{Not sure about my analysis of these pictures, please read through and correct as you see fit. Also pls put some comments here on the stripes images...}
 
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/Q14a.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/Q14b.png}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/Q14c.png}
+\end{figure}
+
+\textbf{Rectangle and Disks:}
+
+Even though the images appear well blurred with the Motion kernel, the FT does not display that much information in the image, mostly being focused in the corners and the spectrum being focused sharply in the middle for the rectangle image, and in a vertical line for the circle image. Note, we had to give parameters for length and $\theta$ to get a visible result with this kernel. For the other kernels, we used the default parameters.
+
+The blurring of the rectangle and disk images is not quite as visible when displaying only the blurred image with the Gaussian kernel, as compared to the Motion kernel, however from the FT it is quite obvious that something has happened to the image. Particularly the circle image displays an  interesting pattern that seems to repeat throughout the image and is concentrated in the center. The Fourier spectrum in the rightmost subplot shows a similar spectrum as the horizontal stripes, however the elements continue throughout the whole spectrum (in the vertical direction) instead of being concentrated only in the middle. The Log kernel again detects the edges of the rectangle and circle, and the mathematically repeating pattern in the FT images is even stronger.
+
+An example of blurring and FT of the rectangle and circle images with the Gaussian kernel can be seen below.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/Q14e.png}
+\end{figure}
 
 \textbf{Question 15:}
 \textit{Write a program that extracts the speciﬁc ﬁeld in the image Champs.jpg (see Fig. 5).}
@@ -250,24 +291,45 @@ where:
 \textbf{Question 16:}
 \textit{Why do we have chosen this model? What are the limits of this model with respect to a single lens model?}
 
+This model was most likely chosen because of its simplicity in explaining how noise can be modelled (and added) to an image. However, the limits of this model is that it assumes a "single lense model", i.e., that only one form of noise (the one modeled) is present in a given image. This model is not enough to describe real-life situations, as very seldom does an image only contain such noise as represented in this model. 
+
+The model also does not account for spatially varying blur, i.e., the blur for each pixel is based on one single value present throughout the whole convolution kernel. In a real-life situation, images might be blurred quite unevenly throughout the image. objects closer to the camera lense might also be differently blurred than objects further away, however, in this image since it is taken from a great distance, that approximation might be reasonable.
+
+The model also assumes only linear distortion effects and does not take into account nonlinear effects such as sensor saturation (certain intensities might get clipped), optical aberrations (e.g. distortion and chromatic aberration) and motion blur (objects at different speeds blur differently). The latter of which is most likely neglectable for an earth observation application such as this.
+
+Finally, the model assumes the only present noise form would be Gaussian noise, however, many other noise forms exist in real images such as Poisson or salt-and-pepper noise.
+
 \textit{Load the image of Toulouse (\textbf{toulouse.bmp}), blur this image with a $(2T+1)$-sized square kernel (Typically $T = 3$). The convolution kernel is thus $h(x,y) = \alpha$ if $|x| \leq T$ and $|y| \leq T$, with $\alpha = \frac{1}{(2T+1)^2}$.
 }
 
-\TODO{}
+The original image with added blur and noise can be seen below:
+
+\TODO{add pic}
 
 \textbf{Question 17:}
 \textit{Compare the spectrums of the original image and of the blur image: what do you observe? Justify.}
 
-\TODO{}
+Not much can be said about the fft2 and FT spectrum for both images. In the fft2 we see a typical even random distribution of frequencies and in the abs() domain, these are concentrated to either being 1 or 0 and visible only around the zer-point of the graph when zooming in. The Log of the FT spectrum however shows quite a difference when comparing the original and blurred/noisy image, and remarkably we can see a "cross" pattern in the center of the image for the blurred/noisy image.
+
+The fft2, FT spectrum and log of the FT spectrum can be seen in the image below.
+Note that the FT spectrum and log FT spectrum are zoomed in for clarity.
+
+To further the comparison, in exaggeration the difference between the two images and their spectra is shown in the image below.
+\TODO{Any comment on this difference?}
+
+\TODO{add pic}
+
+
 
 \subsubsection{Blur Estimation}
 The objective is here to estimate a posteriori the value of $T$, \textit{i.e.} from the blurred image.
 
 \noindent In dim 1, $h(x) = \sqrt{\alpha}$ if $|x| \leq T$. The DFT is
 
-\[
+\begin{equation}
+\label{eq:DFT}
 \mathcal{H}(u) = \sum_{x=-T}^{+T} h(x)e^{-j 2\pi \frac{ux}{N}} = \frac{1}{2T+1} \sum_{x=-T}^{+T} w^x
-\]
+\end{equation}
 
 However,
 
@@ -277,25 +339,81 @@ However,
 
 Thus,
 
-\[
+\begin{equation}
+\label{eq:H(u)}
 \mathcal{H}(u) = \frac{1}{2T+1} \frac{\sin\left(2\pi \frac{u}{N} (T + \frac{1}{2})\right)}{\sin\left(\pi \frac{u}{N}\right)}
-\]
+\end{equation}
 
 In this case, $N = 512$, $u = -512 \dots 512$. In dim 2, $h(x,y) = h(x)h(y)$.
 
 \textbf{Question 18:}
 \textit{Propose a cardinal sinus function that have the same zeros than H(u) (superpose the two functions). What conclusion could you give from these properties? Could you estimate T ?}
 
-\TODO{}
+If we work the above \autoref{eq:H(u)} a bit we can extract from it two separate cardinal sine functions. As a reminder, $sinc(x) = \frac{sin(x)}{x}$:
+\begin{equation}
+\begin{split}    
+    \mathcal{H} &= \frac{1}{(2T +1)} \frac{2 \pi \frac{u}{N}(T + \frac{1}{2})}{2 \pi \frac{u}{N}(T + \frac{1}{2})} \frac{\sin 2 \pi \frac{u}{N}(T + \frac{1}{2})}{\sin ( \pi \frac{u}{N})}
+    \\
+    &= \frac{\pi\frac{u}{N} \cancel{(2 T +1)}}{\cancel{(2T+1)}  2\pi \frac{u}{N}(T+\frac{1}{2})} 
+    \frac{\sin 2 \pi \frac{u}{N}(T + \frac{1}{2})}{sin( \pi \frac{u}{N})}
+    \\
+    &= \frac{sinc (2 \pi \frac{u}{N}(T + \frac{1}{2}))}{sinc( \pi \frac{u}{N})}
+\end{split}
+\end{equation}
+
+The zeros of this function, will be zero when the sinc function in the nominator approaches zero. This happens when the nominator of this sinc function in turn approaches zero:
+\begin{equation}
+\begin{split}
+    &sinc (2 \pi \frac{u}{N}(T + \frac{1}{2})) = 0 \\
+    & \frac{sin( 2 \pi \frac{u}{N}(T + \frac{1}{2}) )}{2 \pi \frac{u}{N}(T + \frac{1}{2})} = 0 \\
+    & sin(2 \pi \frac{u}{N}(T + \frac{1}{2})) = 0
+\end{split}
+\end{equation}
+This occurs when:
+\[
+2 \pi \frac{u}{N}(T + \frac{1}{2}) = k \pi, k \in \mathbb{Z}
+\]
+or when:
+\begin{equation}
+\label{eq:zeros}
+u = \frac{k N}{2 (T + \frac{1}{2})}
+\quad \Rightarrow \quad
+T = \frac{k N}{2 u} - \frac{1}{2} 
+\end{equation}
+
+One conclusion we can draw from this is that the blur removes certain frequencies, i.e., zeros in the spectrum. This indicates a loss of information at those points. This means that blurred images lose high-frequency details making sharp edges appear smoother.
+
+An algorithmic approach to estimate T-values would then be to first study the image and find out at what frequencies, $u$, the FT approaches zero values at the different harmonics (probably enough at $k=1$). 
+Then we could based on this frequency calculate the T-value from \autoref{eq:zeros} for a known $N$ and the already identified frequency $u$. 
+
 
 \textit{Compare the original image spectrum and the blurred image spectrum (using eventually the log function):}
+
+See Log plots in \textit{Question 17}. 
+\TODO{Thoughs? I would say that more high-frequency components can be visible in the blurred/noisy image than in the original image? Is this correct and makes sense? Why does it make sense?}
 
 
 
 \textbf{Question 19:} \textit{Estimate T.}
 
-\TODO{}
+With the above described algorithmic approach we created a MatLab script to estimate the T value for the first harmonic $k=1$ and the output gives the following estimates:
+\begin{lstlisting}
+    Near-zero frequency components:
+     fx      fy 
+    ____    ____
+    
+    -308    -404
+    -204    -108
+    
+    Estimated T: 0.33
+    Estimated T: 0.75
+    Estimated T: 0.13
+    Estimated T: 1.87
+\end{lstlisting}
 
+Out of these values the last one is closest to our initial defined T value when we generated the image, however, this is not close at all to the real value. It took quite a lot of playing around with the sampling threshold to even get close to this and in the end, the noise we originally added to the blurred image might make the estimation of the T-value simply too unreliable. There might also be something wrong in the algorithm where we try to find which frequency the first harmonic 0 is approached.
+
+\TODO{fix?? I'm giving up...}
 
 \subsubsection{Image Deblurring}
 
