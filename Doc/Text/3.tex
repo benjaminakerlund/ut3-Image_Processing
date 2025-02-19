@@ -83,6 +83,7 @@ Here we have both linear and quadratic terms, as well as cross-terms, which desc
 The well-known formula for an ellipse is given as
 \begin{equation}
     \frac{(x - x_0)^2}{a^2} + \frac{(y - y_0)^2}{b^2} = 1
+    \label{eq:ellipse}
 \end{equation}
 
 This however does not account for the rotation of an ellipse. The parameters we get out of the pseudo inverse approach are for the rotated ellipse. We can consider the ellipse to be the rotation of a traditional, axis-aligned ellipse, that was rotated through the transformation
@@ -123,16 +124,31 @@ One can apply the trigonometric identity $\tan(2\theta) = \frac{2\tan\theta}{1 -
 
 Next we can factorize \autoref{eq:conicSectionUnrotated} to make the traditional ellipse equation appear. By expanding the square, we obtain
 \begin{equation}
-    a' \left[ x\right]^2
+    a' \left[ x' + \frac{d'}{2a'}\right]^2 + c' \left[ y' + \frac{e'}{2c'}\right]^2 = 1 + \frac{d'^2}{4 a'} + \frac{e'^2}{4 c'}
 \end{equation}
 
+From this we can read off the values of the semi-major and semi-minor axes compared to \autoref{eq:ellipse}, which will be the maximum and minimum respectively of the set 
+\begin{equation}
+    \left\{ \sqrt{\frac{1 + \frac{d'^2}{4 a'} + \frac{e'^2}{4 c'}}{a'}}, \sqrt{\frac{1 + \frac{d'^2}{4 a'} + \frac{e'^2}{4 c'}}{c'}}  \right\} 
+\end{equation}
+
+The center of the ellipse is trivially
+\begin{equation}
+    \begin{cases}
+        x_0' = -\frac{d'}{2a'} \\
+        y_0' = -\frac{e'}{2c'}
+    \end{cases}
+\end{equation}
+Which must of course be rotated back into place with \autoref{eq:conicSectionTransform} to have the center point of the rotated ellipse.
+
+With the mathematical framework at hand, the result of the MatLab implementation is shown in \autoref{fig:ReconstructedAsteroidTrajectory}. The asteroid's trajectory is generated at random every time the script is run, and the fit shows a very good match to the original trajectory.
 \begin{figure}[!ht]
     \centering
     \includegraphics[width=0.5\linewidth]{Doc/Graphics/Part3/ReconstructedAsteroidTrajectory.png}
     \caption{Reconstructed asteroid trajectory}
     \label{fig:ReconstructedAsteroidTrajectory}
 \end{figure}
-
+\FloatBarrier
 
 \subsection{Shape-Based Approaches}
 

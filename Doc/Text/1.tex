@@ -304,22 +304,34 @@ Finally, the model assumes the only present noise form would be Gaussian noise, 
 
 The original image with added blur and noise can be seen below:
 
-\TODO{add pic}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Doc/Graphics/Part1/Q16.png}
+\end{figure}
+
+
 
 \textbf{Question 17:}
 \textit{Compare the spectrums of the original image and of the blur image: what do you observe? Justify.}
 
-Not much can be said about the fft2 and FT spectrum for both images. In the fft2 we see a typical even random distribution of frequencies and in the abs() domain, these are concentrated to either being 1 or 0 and visible only around the zer-point of the graph when zooming in. The Log of the FT spectrum however shows quite a difference when comparing the original and blurred/noisy image, and remarkably we can see a "cross" pattern in the center of the image for the blurred/noisy image.
+Not much can be said about the fft2 and FT spectrum for both images. In the fft2 we see a typical even random distribution of frequencies and in the abs() domain, these are concentrated to either being 1 or 0 and visible only around the zero-point of the graph when zooming in. The Log of the FT spectrum however shows quite a difference when comparing the original and blurred/noisy image, and remarkably we can see a "cross" pattern in the center of the log spectrum for the blurred/noisy image.
 
 The fft2, FT spectrum and log of the FT spectrum can be seen in the image below.
 Note that the FT spectrum and log FT spectrum are zoomed in for clarity.
 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/Q17a.png}
+\end{figure}
+
 To further the comparison, in exaggeration the difference between the two images and their spectra is shown in the image below.
 \TODO{Any comment on this difference?}
 
-\TODO{add pic}
-
-
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/Q17b.png}
+\end{figure}
 
 \subsubsection{Blur Estimation}
 The objective is here to estimate a posteriori the value of $T$, \textit{i.e.} from the blurred image.
@@ -471,9 +483,16 @@ The two lines to complete this program (with some small other adjustments) can b
 \textbf{Question 21:}
 \textit{What’s happen with the image marcheur.jpg ?}
 
-\TODO{change }
+We can see that the motion blurred, but non-noisy \texttt{marcheur} picture is reconstructed partially, but not particularly well. The situation is the same also when noise is added. We can see that the algorithm performs significantly better for the \texttt{tuolouse.bmp} image.
+\TODO{Other comments?}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{Doc/Graphics/Part1/Q21a.png}
+\end{figure}
 
-
-
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=1\linewidth]{Doc/Graphics/Part1/Q21b.png}
+\end{figure}
 
