@@ -340,7 +340,9 @@ rect_h = 32;
 image = horizontal_stripes(width, height, stripe_width);
 image_T = image';
 
-h = fspecial("motion", 50, 45);
+kernel = "average"
+%h = fspecial("motion", 50, 45);
+h = fspecial(kernel);
 image_filtered = imfilter(image, h);
 image_edge_C = edge(image, "Canny");
 image_edge_P = edge(image, "Prewitt");
@@ -362,7 +364,7 @@ subplot(2,5,8), imshow(imT_edge_C), title('Canny')
 subplot(2,5,9), imshow(imT_edge_P), title('Prewitt')
 subplot(2,5,10), imshowpair(imT_edge_C, imT_edge_P), title('combined techniques')
 
-% REAL IMAGE
+%% REAL IMAGE
 im = imread('../BE1_IntroComputerVision/champs.png');
 im = rgb2gray(im);
 h = fspecial("motion", 50, 45);
@@ -665,13 +667,106 @@ title("Extracted Field")
 
 %% Question 16
 clc; clear; close all;
+im = imread('../BE1_IntroComputerVision/toulouse.bmp');
+im_d = double(im);      % Convert to double
+
+% Blur parameters
+T = 3;                          % given
+kernel_size = (2*T + 1);        % given
+alpha = 1 / (kernel_size^2);    % alpha, given
+
+% Convolution kernel
+h = ones(kernel_size);          % initial matrix with ones
+H = alpha * h;                  % conv. kernel
+
+% Apply convolution to blur image
+im_blur = imfilter(im_d, H); % replicate: Input array values outside the bounds of the array are assumed to equal the nearest array border value.
+
+% Add Gaussian noise
+noise_mean = 0;
+noise_stdev = 20;           % this is a very high number since image values are not normalised to [0, 1]
+im_noisy = im_d + (noise_stdev * randn(size(im_d)));
+im_blur_noisy = im_blur + im_noisy - im_d;
+
+% convert back to uint8a
+im_blur = uint8(im_blur);
+im_noisy = uint8(im_noisy);
+im_blur_noisy = uint8(im_blur_noisy);
+
+figure, sgtitle('Blurring and adding noise to real Image'), subplot(1,4,1), imshow(im), title('Original')
+subplot(1,4,2), imshow(im_blur), title('Blurred image')
+subplot(1,4,3), imshow(im_noisy), title('Noisy image')
+subplot(1,4,4), imshow(im_blur_noisy), title('Blurred and noisy image')
 
 %% Question 17
-clc; clear; close all;
+clc; close all; % ONLY RUN THIS AFTER Q16 HAS BEEN RUN
 
-%% Question 18
-clc; clear; close all;
+% original
+ft = fft2(im);
+ft = fftshift(ft);
+ft_spectrum = abs(ft);
+
+% blurred and noisy
+ft_bl = fft2(im_blur_noisy);
+ft_bl = fftshift(ft_bl);
+ft_bl_spectrum = abs(ft_bl);
+
+% plot spectrums
+figure, sgtitle('FT spectrums of original and blurred, noisy image')
+subplot(2,4,1), imshow(im), title('Original')
+subplot(2,4,2), imshow(fft2(im_d)), title('fft2');
+subplot(2,4,3), imagesc(ft_spectrum), colorbar, title('FT spectrum');
+subplot(2,4,4), imagesc(log(ft_spectrum)), colorbar, title('Log')
+
+subplot(2,4,5), imshow(im_blur_noisy), title('Original w/ blur and noise');
+subplot(2,4,6), imshow(fft2(im_blur_noisy)), title('fft2');
+subplot(2,4,7), imagesc(ft_bl_spectrum), colorbar, title('FT spectrum');
+subplot(2,4,8), imagesc(log(ft_bl_spectrum)), colorbar, title('Log')
+
+% Comparison plots
+figure, sgtitle('Comparison plots'), subplot(1,2,1), imshow(abs(im_blur_noisy - im), []), title({'Difference between noisy/blurred', 'image and original'})
+subplot(1,2,2), imagesc(abs(ft_bl_spectrum - ft_spectrum)), colorbar, title({'Difference between Log FT spectra of', 'noisy/blurred image and original'})
+
 
 %% Question 19
-clc; clear; close all;
+clc; close all; %% Only run this after Q16 and Q17?
+
+% Load and convert image
+    % use im or im_d and im_blurred_noisy from workspace
+
+% Compute the Fourier Transform (Magnitude Spectrum)
+    % use ft_bl and ft_bl_spectrum from workspace ??? No ??
+F = fft2(double(im_blur_noisy));
+F_shifted = fftshift(F); % Centering the zero frequency
+F_spectrum = abs(F_shifted); % compute magnitude spectrum % and display? 
+
+% Find the first zero crossing in frequency
+N = size(F_shifted, 1);    % Assuming square image
+u = -N:N;          % Frequency indices
+
+% Find first zero (where spectrum approaches zero)
+threshold = max(F_spectrum(:)) * 0.0000008; % Define a small threshold
+zero_frequencies = F_spectrum < threshold;
+zero_index = find(F_spectrum(N/2+1, :) < threshold, 1, 'first'); 
+
+figure, subplot(1,2,1), imshow(log(F_spectrum), []), title('Log FT Spectrum')
+subplot(1,2,2), imshow(log(F_spectrum), []), hold on;
+[row, col] = find(zero_frequencies);
+
+fx_vals = u(row);
+fy_vals = u(col);
+disp('Near-zero frequency components:');
+disp(table(fx_vals(:), fy_vals(:), 'VariableNames', {'fx', 'fy'}));
+
+plot(col, row, 'r', 'MarkerSize', 1);
+title('Near-Zero frequency components'), hold off;
+
+zero_indexes = [fx_vals , fy_vals];
+% Estimate T using the first zero crossing
+for i = 1:max(size(zero_indexes))
+    u = abs(zero_indexes(i));
+    T_estimated = (N / (2 * u)) - 0.5;
+    fprintf('Estimated T: %.2f\n', T_estimated);
+end
+    
 
