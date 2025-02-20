@@ -1,6 +1,7 @@
+%% Shape-based approach  
+
 close all, clc, clear
 
-    
 function find_planet(im)
     global im_bw; % need this for the optimization call
     
@@ -49,59 +50,18 @@ function find_planet(im)
     im_opt = im_circle(width, height, xopt(1), xopt(2), xopt(3));
     
     figure
-    subplot(2, 2, 1), imshow(im)
-    subplot(2, 2, 2), imshow(im_gray)
-    subplot(2, 2, 3), imshow(im_bw)
-    subplot(2, 2, 4), imshow(im_opt)
+    subplot(2, 2, 1), imshow(im), title('Original')
+    subplot(2, 2, 2), imshow(im_gray), title('Gray scale')
+    subplot(2, 2, 3), imshow(im_bw), title('Binary')
+    subplot(2, 2, 4), imshow(im_opt), title('Fit')
 end
 
-% Load the image
+% Load the images
 im_moon            = imread('Images/lunar-eclipse-sep-28-2015-michelle-wood-1.jpg');
 im_jupiter_earth   = imread('Images/Jupiter-dreams-meaning.jpg');
 im_jupiter_partial = imread('Images/d52ed43e4a_106828_jupiter-pole-sud-juno.jpg');
 
-%% Shape-based approach
 find_planet(im_moon);
 find_planet(im_jupiter_earth);
 find_planet(im_jupiter_partial);
 
-%% Contour-based
-clc, close all
-
-% Pre-process images
-im = im_jupiter_earth;
-im_gray = rgb2gray(im);
-im_bw = imbinarize(im_gray, 0.1);
-[height, width] = size(im_bw);
-
-% Detect edges
-[B, L] = bwboundaries(im_bw, 'noholes');
-figure, imshow(im), hold on
-for k = 1:length(B)
-   boundary = B{k};
-   scatter(boundary(:,2), boundary(:,1), 5, 'filled', 'o')
-end
-
-%% Circle detect with optimization
-global data_pts;
-data_pts = B{1};
-function d = cost_circle(x)
-    global data_pts
-    x_c = x(1); 
-    y_c = x(2); 
-    r   = x(3);
-    d = sum(abs(r - sqrt((data_pts(:,1) - x_c).^2 + (data_pts(:,2) - y_c).^2)));
-end
-
-
-x0 = [width/2, height/2, 100];
-xopt = fminunc(@cost_circle, x0, optimset('Display', 'iter'));
-
-angles = 1:1:360;
-y = xopt(3) .* cos(angles * pi/180) + xopt(1);
-x = xopt(3) .* sin(angles * pi/180) + xopt(2);
-figure, imshow(im), hold on
-scatter(data_pts(:,2), data_pts(:,1), 5, 'filled', 'o')
-scatter(x, y)
-
-%% Circle detect with pseudo inverse
