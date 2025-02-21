@@ -45,15 +45,61 @@ function findPlanetPseudoInverse(im, saveName)
     y_est = radius * sin(angles) + center(2);
     
     figure, xlim([0, w]), ylim([0, h]), axis('equal'), hold on 
-    scatter(x, y, '.', 'SizeData', 150,'MarkerEdgeAlpha', 0.3)
-    plot(x_est, y_est, '-', 'LineWidth', 2)
+    scatter(x, h-y, '.', 'SizeData', 150,'MarkerEdgeAlpha', 0.3)
+    plot(x_est, h-y_est, '-', 'LineWidth', 2)
     axis off
     legend('Edge data', 'Contour fit')
     saveas(gcf, saveName);
 end
 
-function results = circleFitRANSAC(im, minPts, threshold, maxIter)
+function circleFitOptimize(im, saveName)
+    % Pre-process images
+    im_gray = rgb2gray(im);
+    im_bw = imbinarize(im_gray, 0.1);
+    [height, width] = size(im_bw);
+    % 
+    % % Detect edges
+    % [B, L] = bwboundaries(im_bw, 'noholes');
+    % %figure, imshow(im), hold on
+    % for k = 1:length(B)
+    %    boundary = B{k};
+    %    %scatter(boundary(:,2), boundary(:,1), 5, 'filled', 'o')
+    % end
+    % 
+
+    global data_pts;
+    [x, y] = getEdges(im);
+    size(x)
+    data_pts = [y x];
+    %data_pts = B{1};
+    size(data_pts)
+    function d = cost_circle(x)
+        x_c = x(1); 
+        y_c = x(2); 
+        r   = x(3);
+        %radii = data_pts - [x_c; y_c];
+        %diff = r - radii
+        d = sum(abs(r - sqrt((data_pts(:,1) - x_c).^2 + (data_pts(:,2) - y_c).^2)));
+    end
+    
+    
+    x0 = [width/2, height/2, 100];
+    xopt = fminunc(@cost_circle, x0, optimset('Display', 'iter', 'PlotFcns', @optimplotfval));
+    
+    angles = 1:1:360;
+    y = xopt(3) .* cos(angles * pi/180) + xopt(1);
+    x = xopt(3) .* sin(angles * pi/180) + xopt(2);
+    figure, axis('equal'), xlim([0 width]), ylim([0 height]), hold on%imshow(im), hold on
+    scatter(data_pts(:,2), height-data_pts(:,1), 5, '.', 'SizeData', 150,'MarkerEdgeAlpha', 0.3)
+    plot(x, height-y, LineWidth=2)
+    legend('Edges', 'Optimized fit')
+    axis off
+    saveas(gcf, saveName);
+end
+
+function results = circleFitRANSAC(im, minPts, threshold, maxIter, saveName)
     [xe, ye] = getEdges(im);
+    [height, width, channels] = size(im);
     data = [xe ye];
     nPts = size(data, 1);
     disp(nPts)
@@ -120,10 +166,11 @@ function results = circleFitRANSAC(im, minPts, threshold, maxIter)
     xf = r * cos(angles) + x0;
     yf = r * sin(angles) + y0;
 
-    figure, imshow(im), hold on
-    scatter(xe, ye, '.')
-    plot(xf, yf, '-', LineWidth=2)
+    figure, axis('equal'), xlim([0 width]), ylim([0 height]), hold on % imshow(im), 
+    scatter(xe, height-ye, '.', 'SizeData', 150,'MarkerEdgeAlpha', 0.3)
+    plot(xf, height-yf, '-', LineWidth=2)
     legend('Edges', 'Fitted circle')
+    axis off
 end
 
 %% Built-In edge detection
@@ -137,83 +184,14 @@ findPlanetPseudoInverse(im_jupiter_earth, 'contourDection_pseudoInverse_jupiter_
 findPlanetPseudoInverse(im_jupiter_partial, 'contourDection_pseudoInverse_jupiter_partial.png');
 
 %% Circle detect with optimization
-
-function circleFitOptimize(im)
-    % Pre-process images
-    im_gray = rgb2gray(im);
-    im_bw = imbinarize(im_gray, 0.1);
-    [height, width] = size(im_bw);
-    
-    % Detect edges
-    [B, L] = bwboundaries(im_bw, 'noholes');
-    %figure, imshow(im), hold on
-    for k = 1:length(B)
-       boundary = B{k};
-       %scatter(boundary(:,2), boundary(:,1), 5, 'filled', 'o')
-    end
-    
-    global data_pts;
-    data_pts = B{1};
-    function d = cost_circle(x)
-        x_c = x(1); 
-        y_c = x(2); 
-        r   = x(3);
-        %radii = data_pts - [x_c; y_c];
-        %diff = r - radii
-        d = sum(abs(r - sqrt((data_pts(:,1) - x_c).^2 + (data_pts(:,2) - y_c).^2)));
-    end
-    
-    
-    x0 = [width/2, height/2, 100];
-    xopt = fminunc(@cost_circle, x0, optimset('Display', 'iter', 'PlotFcns', @optimplotfval));
-    
-    angles = 1:1:360;
-    y = xopt(3) .* cos(angles * pi/180) + xopt(1);
-    x = xopt(3) .* sin(angles * pi/180) + xopt(2);
-    figure, axis('equal'), xlim([0 width]), ylim([0 height]), hold on%imshow(im), hold on
-    scatter(data_pts(:,2), height-data_pts(:,1), 5, 'filled', 'o')
-    plot(x, height-y, LineWidth=2)
-    legend('Edges', 'Optimized fit')
-    axis off
-end
-
-% settings to scale the plots uniformly
-x0 = 0;
-y0 = 0;
-width = 800;
-height = 600;
-
-circleFitOptimize(im_moon);
-set(gcf,'position',[x0,y0,width,height])
-saveas(gcf, 'Optimization_moon.png');
-
-circleFitOptimize(im_jupiter_earth);
-set(gcf,'position',[x0,y0,width,height])
-saveas(gcf, 'Optimization_jupiter_earth.png');
-
-circleFitOptimize(im_jupiter_partial);
-set(gcf,'position',[x0,y0,width,height])
-saveas(gcf, 'Optimization_jupiter_partial.png');
+circleFitOptimize(im_moon, 'Optimization_moon.png');
+circleFitOptimize(im_jupiter_earth, 'Optimization_jupiter_earth.png');
+circleFitOptimize(im_jupiter_partial, 'Optimization_jupiter_partial.png');
 
 %% Circle detect RANSAC
-
-% settings to scale the plots uniformly
-x0 = 0;
-y0 = 0;
-width = 800;
-height = 600;
-
-res1 = circleFitRANSAC(im_moon, 3500, 3, 50);
-set(gcf,'position',[x0,y0,width,height])
-exportgraphics(gcf, 'RANSAC_moon.png');
-
-res2 = circleFitRANSAC(im_jupiter_earth, 1000, 3, 1000);
-set(gcf,'position',[x0,y0,width,height])
-exportgraphics(gcf, 'RANSAC_jupiter_earth.png');
-
-res3 = circleFitRANSAC(im_jupiter_partial, 5000, 5, 10000);
-set(gcf,'position',[x0,y0,width,height])
-exportgraphics(gcf, 'RANSAC_jupiter_partial.png');
+res1 = circleFitRANSAC(im_moon, 3500, 3, 50, 'RANSAC_moon.png');
+res2 = circleFitRANSAC(im_jupiter_earth, 1000, 3, 1000, 'RANSAC_jupiter_earth.png');
+res3 = circleFitRANSAC(im_jupiter_partial, 5000, 5, 10000, 'RANSAC_jupiter_partial.png');
 
 %% Circle detect using Hough transform
 
