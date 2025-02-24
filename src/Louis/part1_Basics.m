@@ -171,16 +171,17 @@ RGB_filtered = RGB .* uint8(mask);
 
 figure
 subplot(1,2,1), imshow(RGB)
-subplot(1,2,2), imshow(RGB_filtered), exportgraphics(gca, '../Q8_FilteredBeach.png')
+subplot(1,2,2), imshow(RGB_filtered)
+exportgraphics(gca, '../Q8_FilteredBeach.png')
 
 %% Question 9: Histograms
 clc, clear, close all
 
 im = imread('SpainBeach.jpg');
 figure, axis('equal')
-subplot(1,2,1), imhist(im), title('Default'), exportgraphics(gca, '../Q9_Hist.png')
-subplot(1,2,2), imhist(histeq(im)), title('Equalized'), exportgraphics(gca, '../Q9_HistEq.png')
-
+subplot(1,2,1), imhist(im), title('Default'), 
+subplot(1,2,2), imhist(histeq(im)), title('Equalized')
+exportgraphics(gcf, '../Q9_Hist.png')
 
 %% Question 10: Mysterious .bmp files
 clc, clear, close all

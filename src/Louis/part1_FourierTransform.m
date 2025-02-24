@@ -7,10 +7,14 @@ titles = {'Rectangle', 'Circle', 'Vertical stripes', 'Horizontal stripes'};
 for i=1:length(images)
     im = imread(images{i});
     im = rgb2gray(im);
+    [h, w] = size(im);
     ft = fft2(im);
     ft = fftshift(ft);
     spectrum = abs(ft);
-    figure, imagesc(spectrum), title(titles{i}), exportgraphics(gcf, strcat('../Q13_', titles{i}, '.png'))
+    figure, imagesc(spectrum), axis equal off, ylim([0 h])
+    exportgraphics(gcf, strcat('../Q13_', titles{i}, '.png'))
+    figure, imagesc(log(spectrum)), axis equal off, ylim([0 h])
+    exportgraphics(gcf, strcat('../Q13_log_', titles{i}, '.png'))
 end
 
 %% Question 14: FT spectrum of blurred image
@@ -26,8 +30,14 @@ for i=1:length(images)
     ft = {fft2(im{1}), fft2(im{2})};
     ft = {fftshift(ft{1}), fftshift(ft{2})};
     spectrum = {abs(ft{1}), abs(ft{2})};
-    figure, imagesc(spectrum{1}), title(strcat(titles{i}, ' Disk r=10')), exportgraphics(gcf, strcat('../Q14_Disk10_', titles{i}, '.png'))
-    figure, imagesc(spectrum{2}), title(strcat(titles{i}, ' Disk r=50')), exportgraphics(gcf, strcat('../Q14_Disk50_', titles{i}, '.png'))
+    figure, imagesc(spectrum{1}), axis equal off
+    exportgraphics(gcf, strcat('../Q14_Disk10_', titles{i}, '.png'))
+    figure, imagesc(log(spectrum{1})), axis equal off
+    exportgraphics(gcf, strcat('../Q14_Disk10_log_', titles{i}, '.png'))
+    figure, imagesc(spectrum{2}), axis equal off
+    exportgraphics(gcf, strcat('../Q14_Disk50_', titles{i}, '.png'))
+    figure, imagesc(log(spectrum{2})), axis equal off
+    exportgraphics(gcf, strcat('../Q14_Disk50_log_', titles{i}, '.png'))
 end
 
 %% Question 15: Extraction of field
