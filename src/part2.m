@@ -207,8 +207,29 @@ subplot(3,2,5), imshow(mask), title('Combined Mask')
 im_filtered = RGB .* uint8(mask);
 subplot(3,2,6), imshow(im_filtered), title('Filtered')
 
-%% Question 13
+%% Question 12
 clear, clc, close all
+
+% Load image
+im = imread("../BE2_IntroMorphoMath/cameraman.tif");
+im_d = double(im);
+
+se = strel('disk', 5);
+
+top_hat = im_d - imopen(im_d, se);
+
+black_hat = imclose(im_d, se) - im_d;
+
+figure; sgtitle('Top-Hat and Black-Hat operations on BW image');
+subplot(2,3,1), imshow(im), title('Original');
+subplot(2,3,2), imshow(top_hat), title('Top-Hat Transform');
+subplot(2,3,3), imshow(black_hat), title('Black-Hat Transform');
+subplot(2,3,4), imshow(im), title('Original');
+subplot(2,3,5), imshow(top_hat, []), title('Top-Hat Transform');
+subplot(2,3,6), imshow(black_hat, []), title('Black-Hat Transform');
+
+%% Question 13
+clc, close all
 
 % Load image
 im = imread("../BE2_IntroMorphoMath/Diplo1.gif") * 255;

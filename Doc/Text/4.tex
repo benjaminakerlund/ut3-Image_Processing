@@ -6,7 +6,12 @@
 \textit{Enumerate main supervized classiﬁcation techniques and describe them in few lines.}
 
 %~~~~~~~~~~~~~~ANSWER~~~~~~~~~~~~~~
-Supervised Classification is... ???
+Supervised Classification is one of the two broad types of digital classification methods used by the majority of image processing systems to analyse remote sensing images. It requires selection of an appropriate classification scheme, and then identification of training areas in the image that best represents each class. In supervised classification, the analyst identifies in the image homogenous representative areas of different land use and land cover types (information classes) of interest. These are called \textit{training areas} or \textit{training samples}. 
+
+The three distinct stages of Supervised Classification are training, classification and output. Training is the identification of a sample of pixels of known classes gathered from reference data, such as field visits, existing maps, reports and aerial photographs. These could be e.g. water, sand, dirt, roads, clouds etc. The key characteristics of selecting training areas are shape, location, number and uniformity.
+
+\cite{garg_remote_2024}
+
 
 Some typical Supervised Classification techniques are listed and described below:
 \begin{enumerate}
@@ -23,7 +28,7 @@ Some typical Supervised Classification techniques are listed and described below
     \end{equation*}
 
     
-    \item Bayesian Classification:
+    \item \textbf{Bayesian Classification:}
     Based on the bayesian rule where given an observation \textit{o}, the \textit{prior} (a priori probability), is described as:
     \begin{equation*}
         P(C_i \mid o) = \frac{P(o \mid C_i) P(C_i)}{P(o)}
@@ -47,12 +52,12 @@ Some typical Supervised Classification techniques are listed and described below
     An example of Linear Classification is the Perceptron Algorithm, which bla bla
     
     
-    \item Neural Networks:
-    \item Decision Trees:
-    \item Concept Lattices:
-    \item Support Vector Machine
-    \item Random Forests:
-    \item etc.
+    \item \textbf{Neural Networks:}
+    \item \textbf{Decision Trees:}
+    \item \textbf{Concept Lattices:}
+    \item \textbf{Support Vector Machine}
+    \item \textbf{Random Forests:}
+    \item \textbf{etc.}
 \end{enumerate}
 
 
@@ -147,10 +152,22 @@ on 'Spain Beach' image or another of your choice}
 
 
 
-
+% ~~~~~~~~~~~~~~ UNSUPERVISED CLASSIFICATION ~~~~~~~~~~~~~~~~~~
+\newpage
 \subsection{Unsupervised Classification}
 \textcolor{blue}{\textbf{Question 4:}}
 \textit{Enumerate main unsupervized classiﬁcation techniques and describe them in few lines.}
+
+Unsupervised Classification in essence reverses the process of supervised classification. It requires less input from the analyst to process the image, as the analyst does not predefined the land use and land cover types. However, the analyst can define the number of output classes required and spectral variance (such as the standard deviation, $\sigma$) within each class. The image is divided into those defined number of classes based entirely on the spectral data and with no prior knowledge of what land use and land cover types may be present in the image. \cite{garg_remote_2024}
+
+\begin{itemize}
+    \item \textbf{Clustering} 
+    \subitem \textit{K-Means Algorithm}
+    \subitem \textit{Kohonen Maps}
+    \item \textbf{Regression}
+    \item \textbf{Dimension Reduction}
+    \subitem \textit{Principal Component Analysis} is the most efficient method for Dimension Reduction. It is based on the variance / covariance matrix, where the main eigenvalues are the most important. Associated eigenvectors describe the reduced state space.
+\end{itemize}
 
 
 \textcolor{blue}{\textbf{Question 5:}}
@@ -161,3 +178,74 @@ on 'Spain Beach' image or another of your choice}
     \item PCA technique to reduce the size of an image
 \end{enumerate}
 }
+
+\subsubsection{Principal Component Analysis (PCA)}
+Since the images data is three, sometimes four, dimensional, it is of interest to reduce the amount of dimensions to optimize memory usage. This is done with principal component analysis. The core of the method is to find a line or plane of best fit of the data, onto which the data is then projected. This results in less dimensions being needed to store very similar information, which means PCA presents itself as a possible compression algorithm. 
+
+The steps to find the principal axes are as follows:
+\begin{enumerate}
+    \item Center the data by shifting it by its mean and then calculate the covariance
+    \item Determine the eigenvalues and eigenvectors of the covariance matrix
+    \item Select the eigenvectors with the largest eigenvalue as the direction vectors of either the plane or the line
+\end{enumerate}
+
+Then the data can be compressed by projecting the data onto the plane or line. In order to recover the image after compression, the operation needs to be reversed. For the projection, a simple dot product is enough. In the case of a plane, this looks like
+\begin{equation}
+    D_\mathrm{proj} = (D_\mathrm{original} - \mathrm{mean} ) \cdot \begin{pmatrix}
+        | & | \\
+        \vec{v}_1 & \vec{v}_2 \\
+        | & | 
+    \end{pmatrix}
+\end{equation}
+where $\vec{v}_1$ and $\vec{v}_2$ are the selected eigenvectors with three components, $D_\mathrm{original}$ is the matrix containing the data of the original image, with dimensions of height~x~width~x~3. The compressed data $D_\mathrm{proj}$ then has dimensions height~x~width~x~2.
+
+To decompress the image, we just need to invert this relation, which yields:
+\begin{equation}
+    D_\mathrm{original} = D_\mathrm{proj} \cdot \begin{pmatrix}
+        | & | \\
+        \vec{v}_1 & \vec{v}_2 \\
+        | & | 
+    \end{pmatrix}^T + \mathrm{mean} 
+\end{equation}
+
+We apply the PCA method to the full moon image as a demonstration, and we can see that it is indeed very performant in \autoref{fig:resultsPCA}. The only noticable difference is that the reconstructed image is slightly darker. Since PCA does not touch the number of pixels, the resolution is unaffected by this method. 
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}{0.45\textwidth}
+    \centering
+        \includegraphics[width=\linewidth]{Doc/Graphics/Part4/PCA_im_original.png}
+        \caption{Original}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+    \centering
+        \includegraphics[width=\linewidth]{Doc/Graphics/Part4/PCA_im_reconstructed.png}
+        \caption{Reconstructed}
+    \end{subfigure}
+    \caption{PCA compression}
+    \label{fig:resultsPCA}
+\end{figure}
+\FloatBarrier
+
+\subsubsection{K-means clustering}
+
+The k-means clustering method enables us to select a number of classes we want, and the algorithm will try its best to cluster the data in this number of classes.
+
+The algorithm is as follows:
+\begin{enumerate}
+    \item Select the number of classes k
+    \item Initialize k centroids from the data points at random
+    \item Calculate the distance of each data point to each cluster
+    \item Assign each data point to its closest cluster
+    \item Compute the new centroid from the cluster set
+    \item If the cluster set is empty, select one new centroid at random
+    \item Repeat from step 3 until the centroids stop changing.
+\end{enumerate}
+
+The advantage of this method is that we can determine an ideal number of classes for our purpose. For example in \autoref{fig:resultsKmeans} we tested multiple values of k on the image \texttt{SpainBeach.jpg} and reconstruct the image so that each pixel is colored based on the centroid of the cluster. We found that to properly extract the beach, at least five or six classes are necessary. In this configuration, the distinction between beach and sea foam is made successfully. Once k goes above six, the image starts to become over-classified, where more details get their own classes, but then classes lose their generality.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=\linewidth]{Doc/Graphics/Part4/kMeans_comparison.png}
+    \caption{k-means clustering tests}
+    \label{fig:resultsKmeans}
+\end{figure}

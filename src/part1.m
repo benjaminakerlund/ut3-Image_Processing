@@ -62,14 +62,6 @@ for i = 1:size(D,1)
     end
 end
 
-% F = repmat(0,500,500);
-% for i = 1:10
-%     numb = i*50 -25;
-%     numb2 = numb+25;
-%     F(numb:numb2,:) = 1;
-% end
-
-
 % Plot Stripes
 figure Name 'Part1_Question3a' FileName 'Part1_Question3a'
 sgtitle('Stripes')
@@ -246,8 +238,30 @@ figure Name 'Part1_Question6b' FileName 'Part1_Question6b'
 sgtitle('Grayscale of the HSV colorspace image')
 imshow(rgb2gray(hsv2rgb(I_hsv)))
 
-% Question 7
+%% Question 7
 % What are the values of \alpha, \beta and \gamma?
+clc; clear; close all;
+im = imread('../BE1_IntroComputerVision/cargo.jpg');
+im_double = im2double(im);
+
+alpha = 1.9;
+beta = 0.3;
+gamma = 2.2;
+
+im_a_adjusted = alpha*im_double;
+im_b_adjusted = im_double + beta;
+im_ab_adjusted = alpha * im_double + beta;
+im_ab_adjusted = min(max(im_ab_adjusted, 0), 1);
+im_g_adjusted = im_double .^ gamma;
+im_abg_adjusted = im_ab_adjusted .^ gamma;
+
+figure, sgtitle('\alpha, \beta and \gamma correction')
+subplot(2,3,1), imshow(im_double), title('original')
+subplot(2,3,2), imshow(im_a_adjusted), title(['\alpha increased by \alpha='  num2str(alpha)]);
+subplot(2,3,3), imshow(im_b_adjusted), title(['\beta increased by \beta=' num2str(beta)]);
+subplot(2,3,4), imshow(im_ab_adjusted), title('\alpha and \beta adjusted')
+subplot(2,3,5), imshow(im_g_adjusted), title(['\gamma increased by \gamma =' num2str(gamma)])
+subplot(2,3,6), imshow(im_abg_adjusted), title('\alpha, \beta and \gamma adjusted')
 
 
 %% Question 8
@@ -277,7 +291,7 @@ figure, sgtitle('Grayscale illusion and histogram')
 subplot(1,2,1), imshow(A), title('Grayscale Illusion')
 subplot(1,2,2), histogram(A)
 
-%% Question 10
+%% Question 10: Mysterious .bmp images
 clc; clear; close all;
 imagex = imread('../BE1_IntroComputerVision/imagex.bmp');
 imagexx = imread('../BE1_IntroComputerVision/imagexx.bmp');
@@ -311,34 +325,94 @@ subplot(2,5,8), imshow(imagexx_R), title('R')
 subplot(2,5,9), imshow(imagexx_G), title('G')
 subplot(2,5,10), imshow(imagexx_B), title('B')
 
-%% Question 13
+%% Question 11: Filtering and Edge filtering on stripes and real image
 clc; clear; close all;
 
-% Stripes
-B = repmat(0,500,500);
-for i = 1:10
-    numb = i*50-25;
-    numb2 = numb+25;
-    B(:, numb:numb2) = 1;
-end
+% Parameters
+width = 512;
+height = 512;
+stripe_width = 32;
+radius = 32;
+rect_w = 64;
+rect_h = 32;
+
+% STRIPES
+image = horizontal_stripes(width, height, stripe_width);
+image_T = image';
+
+kernel = "average"
+%h = fspecial("motion", 50, 45);
+h = fspecial(kernel);
+image_filtered = imfilter(image, h);
+image_edge_C = edge(image, "Canny");
+image_edge_P = edge(image, "Prewitt");
+
+imT_filtered = imfilter(image_T, h);
+imT_edge_C = edge(image_T, "Canny");
+imT_edge_P = edge(image_T, "Prewitt");
+
+figure, sgtitle('Blur- and Edge Filtering on stripes')
+subplot(2,5,1), imshow(image), title('Original')
+subplot(2,5,2), imshow(image_filtered), title('Blur filtered')
+subplot(2,5,3), imshow(image_edge_C), title('Canny')
+subplot(2,5,4), imshow(image_edge_P), title('Prewitt')
+subplot(2,5,5), imshowpair(image_edge_C, image_edge_P), title('Combined techniques')
+
+subplot(2,5,6), imshow(image_T), title('Original')
+subplot(2,5,7), imshow(imT_filtered'), title('Blur filtered')
+subplot(2,5,8), imshow(imT_edge_C), title('Canny')
+subplot(2,5,9), imshow(imT_edge_P), title('Prewitt')
+subplot(2,5,10), imshowpair(imT_edge_C, imT_edge_P), title('combined techniques')
+
+%% REAL IMAGE
+im = imread('../BE1_IntroComputerVision/champs.png');
+im = rgb2gray(im);
+h = fspecial("motion", 50, 45);
+im_filtered = imfilter(im, h);
+im_edge_C = edge(im, "Canny");
+im_edge_P = edge(im, "Prewitt");
+
+figure, sgtitle('Blur- and Edge Filtering on real image')
+subplot(1,5,1), imshow(im), title('Original')
+subplot(1,5,2), imshow(im_filtered'), title('Blur filtered')
+subplot(1,5,3), imshow(im_edge_C), title('Canny')
+subplot(1,5,4), imshow(im_edge_P), title('Prewitt')
+subplot(1,5,5), imshowpair(im_edge_C, im_edge_P), title('combined techniques')
 
 
-% Plot Stripes
-figure Name 'Part1_Question13' FileName 'Part1_Question13'
-sgtitle('Stripes')
-subplot(2,2,1)
-imshow(B)
-title('Original')
+%% Question 12: Isolation of stars
+clc; clear; close all;
+imo = imread('../BE1_IntroComputerVision/Etoiles.png');
+im = rgb2gray(imo);
 
-subplot(2,2,2)
-title('FFT')
+% inspect a patch of the image containing noise
+patch = imcrop(im); close;
 
-subplot(2,2,3)
-imshow(B')
-title('Original')
+% Compute variance of patch, which approximates variance of the noise
+patchvar = std2(patch)^2;
 
-subplot(2,2,4)
-title('FFT')
+% Define Degree of smoothing
+DoS = 4*patchvar;
+J = imbilatfilt(im, DoS,25);
+
+figure, sgtitle('Isolating 5 biggest stars with multiple filters')
+subplot(1,4,1), imshow(im), title('Original in BW')
+subplot(1,4,2), imshow(J), title('Gaussian filter to smooth image')
+
+level = graythresh(J);
+J_BW = imbinarize(J, level);
+subplot(1,4,3), imshow(J_BW), title("Binarising with adaptive thresholding")
+
+% Median filter to remove salt-and-pepper noise
+im_median = medfilt2(J_BW, [25 25]);
+subplot(1,4,4), imshow(im_median), title('Median filter to remove salt-and-pepper noise')
+
+
+figure, sgtitle({'Comparison plot with only', 'binarising and median filtering'})
+subplot(1,2,1), imshow(imo), title('Original in RGB')
+im = imbinarize(im);
+im = medfilt2(im, [30 30]);
+subplot(1,2,2), imshow(im), title('Filtered image')
 
 
 %% Question 13: FT spectrum of geometric shapes and patterns
@@ -409,49 +483,107 @@ radius = 32;
 rect_w = 64;
 rect_h = 32;
 
+% Rectangle and Circle
 image = rectangle(width, height, rect_w, rect_h);
 ft_horizontal_stripes = fft2(image, width, height);
 ft_horizontal_stripes = fftshift(ft_horizontal_stripes);
 ft_spectrum = abs(ft_horizontal_stripes);
 
 figure Name 'Part1_Question13' FileName 'Part1_Question13'
-sgtitle("some fourier shit")
-subplot(2,4,1)
-imshow(image);
-subplot(2,4,2)
-imagesc(ft_spectrum);
+sgtitle('FT of rectangles and disks')
+subplot(2,3,1), imshow(image), title('Original');
+subplot(2,3,2), imagesc(ft_spectrum), colorbar, title('FT spectrum');
+subplot(2,3,3), imagesc(log(abs(ft_spectrum))), colorbar, title('FT log spectrum');
 
 image = circle(width, height, radius);
 ft_horizontal_stripes = fft2(image, width, height);
 ft_horizontal_stripes = fftshift(ft_horizontal_stripes);
 ft_spectrum = abs(ft_horizontal_stripes);
 
-subplot(2,4,3)
-imshow(image);
-subplot(2,4,4)
-imagesc(ft_spectrum);
+subplot(2,3,4), imshow(image), title('Original');
+subplot(2,3,5), imagesc(ft_spectrum), colorbar, title('FT spectrum');
+subplot(2,3,6), imagesc(log(abs(ft_spectrum))), colorbar, title('FT log spectrum');
 
-image = horizontal_stripes(width, height, stripe_width);
-ft_horizontal_stripes = fft2(image, width, height);
+% Stripes
+figure, sgtitle('FT of stripes')
+stripes_h = horizontal_stripes(width, height, stripe_width);
+ft_horizontal_stripes = fft2(stripes_h, width, height);
 ft_horizontal_stripes = fftshift(ft_horizontal_stripes);
 ft_spectrum = abs(ft_horizontal_stripes);
 
-subplot(2,4,5)
-imshow(image);
-subplot(2,4,6)
-imagesc(ft_spectrum);
+subplot(2,2,1), imshow(stripes_h), title('Original');
+subplot(2,2,2), imagesc(ft_spectrum), title('FT spectrum');
 
-image = vertical_stripes(width, height, stripe_width);
-ft_horizontal_stripes = fft2(image, width, height);
+stripes_v = vertical_stripes(width, height, stripe_width);
+ft_horizontal_stripes = fft2(stripes_v, width, height);
 ft_horizontal_stripes = fftshift(ft_horizontal_stripes);
 ft_spectrum = abs(ft_horizontal_stripes);
 
-subplot(2,4,7)
-imshow(image);
-subplot(2,4,8)
-imagesc(ft_spectrum);
+subplot(2,2,3), imshow(stripes_v), title('Original');
+subplot(2,2,4), imagesc(log(abs(ft_spectrum))), title('FT spectrum');
+
+
 
 %% Question 14: FT spectrum of blurred image
+% Kernels: Motion, Gaussian and Log
+    % Motion gives ... w/ parameters 45 and 53. Weird values w/ default params
+    % Gaussian gives cool shift in fft with default params
+    % log gives...
+
+close all; kernel = "log"
+figure, sgtitle('Stripes blurring with ' + kernel + ' kernel')
+h = fspecial(kernel);
+h_blur = imfilter(stripes_h, h);
+v_blur = imfilter(stripes_v, h);
+
+ft_horizontal_stripes = fft2(h_blur, width, height);
+ft_horizontal_stripes = fftshift(ft_horizontal_stripes);
+ft_spectrum_h = abs(ft_horizontal_stripes);
+
+ft_vert_stripes = fft2(v_blur, width, height);
+ft_vert_stripes = fftshift(ft_vert_stripes);
+ft_spectrum_v = abs(ft_vert_stripes);
+
+subplot(2,4,1), imshow(stripes_h), title('Original')
+subplot(2,4,2), imshow(h_blur), title('Blurred w/ default params'), %title('Blurred w/ len=45 and \theta=53')
+subplot(2,4,3), imshow(fft2(h_blur)), title('fft2 of blurred')
+subplot(2,4,4), imagesc(ft_spectrum_h), title({'fft2, fftshift and abs', 'of blurred'})
+
+subplot(2,4,5), imshow(stripes_v), title('Original')
+subplot(2,4,6), imshow(v_blur), title('Blurred w/ default params'), %title('Blurred w/ len=45 and \theta=53')
+subplot(2,4,7), imshow(fft2(v_blur)), title('fft2 of blurred')
+subplot(2,4,8), imagesc(ft_spectrum_v), title({'fft2, fftshift and abs', 'of blurred'})
+
+
+%% Rectangle and Circle
+close all; kernel = "log";
+h = fspecial(kernel); 
+% gaussian does not rly work
+% motion gives a slight blur
+% laplacian an log basically does edge detection...
+
+im_o = rectangle(width, height, rect_w, rect_h);
+image = imfilter(im_o, h);
+ft_rectangle = fft2(image, width, height);
+ft_rectangle = fftshift(ft_rectangle);
+ft_spectrum = abs(ft_rectangle);
+
+figure, sgtitle('Rectangle and disc blurring with ' + kernel + ' kernel')
+subplot(2,4,1), imshow(im_o), title('Original');
+subplot(2,4,2), imshow(image), title('Blurred')
+subplot(2,4,3), imshow(fft2(image)), title('fft2 of blurred'), %title('Blurred w/ len=45 and \theta=53') %
+subplot(2,4,4), imagesc(ft_spectrum), colorbar, title({'fft2, fftshift and abs', 'of blurred'});
+
+im_o = circle(width, height, radius);
+image = imfilter(im_o, h);
+ft_circle = fft2(image, width, height);
+ft_circle = fftshift(ft_horizontal_stripes);
+ft_spectrum= abs(ft_horizontal_stripes);
+
+subplot(2,4,5), imshow(im_o), title('Original');
+subplot(2,4,6), imshow(image), title('Blurred')
+subplot(2,4,7), imshow(fft2(image)), title('fft2 of blurred'), %title('Blurred w/ len=45 and \theta=53') %
+subplot(2,4,8), imagesc(abs(ft_spectrum)), colorbar, title({'fft2, fftshift and abs', 'of blurred'});
 
 %% Question 15: Extraction of field
 clc; clear all; close all;
@@ -531,3 +663,110 @@ title("Filtered Image")
 subplot(1,3,3)
 imagesc(uint8(im_filtered))
 title("Extracted Field")
+
+
+%% Question 16
+clc; clear; close all;
+im = imread('../BE1_IntroComputerVision/toulouse.bmp');
+im_d = double(im);      % Convert to double
+
+% Blur parameters
+T = 3;                          % given
+kernel_size = (2*T + 1);        % given
+alpha = 1 / (kernel_size^2);    % alpha, given
+
+% Convolution kernel
+h = ones(kernel_size);          % initial matrix with ones
+H = alpha * h;                  % conv. kernel
+
+% Apply convolution to blur image
+im_blur = imfilter(im_d, H); % replicate: Input array values outside the bounds of the array are assumed to equal the nearest array border value.
+
+% Add Gaussian noise
+noise_mean = 0;
+noise_stdev = 20;           % this is a very high number since image values are not normalised to [0, 1]
+im_noisy = im_d + (noise_stdev * randn(size(im_d)));
+im_blur_noisy = im_blur + im_noisy - im_d;
+
+% convert back to uint8a
+im_blur = uint8(im_blur);
+im_noisy = uint8(im_noisy);
+im_blur_noisy = uint8(im_blur_noisy);
+
+figure, sgtitle('Blurring and adding noise to real Image'), subplot(1,4,1), imshow(im), title('Original')
+subplot(1,4,2), imshow(im_blur), title('Blurred image')
+subplot(1,4,3), imshow(im_noisy), title('Noisy image')
+subplot(1,4,4), imshow(im_blur_noisy), title('Blurred and noisy image')
+
+%% Question 17
+clc; close all; % ONLY RUN THIS AFTER Q16 HAS BEEN RUN
+
+% original
+ft = fft2(im);
+ft = fftshift(ft);
+ft_spectrum = abs(ft);
+
+% blurred and noisy
+ft_bl = fft2(im_blur_noisy);
+ft_bl = fftshift(ft_bl);
+ft_bl_spectrum = abs(ft_bl);
+
+% plot spectrums
+figure, sgtitle('FT spectrums of original and blurred, noisy image')
+subplot(2,4,1), imshow(im), title('Original')
+subplot(2,4,2), imshow(fft2(im_d)), title('fft2');
+subplot(2,4,3), imagesc(ft_spectrum), colorbar, title('FT spectrum');
+subplot(2,4,4), imagesc(log(ft_spectrum)), colorbar, title('Log')
+
+subplot(2,4,5), imshow(im_blur_noisy), title('Original w/ blur and noise');
+subplot(2,4,6), imshow(fft2(im_blur_noisy)), title('fft2');
+subplot(2,4,7), imagesc(ft_bl_spectrum), colorbar, title('FT spectrum');
+subplot(2,4,8), imagesc(log(ft_bl_spectrum)), colorbar, title('Log')
+
+% Comparison plots
+figure, sgtitle('Comparison plots'), subplot(1,2,1), imshow(abs(im_blur_noisy - im), []), title({'Difference between noisy/blurred', 'image and original'})
+subplot(1,2,2), imagesc(abs(ft_bl_spectrum - ft_spectrum)), colorbar, title({'Difference between Log FT spectra of', 'noisy/blurred image and original'})
+
+
+%% Question 19
+clc; close all; %% Only run this after Q16 and Q17?
+
+% Load and convert image
+    % use im or im_d and im_blurred_noisy from workspace
+
+% Compute the Fourier Transform (Magnitude Spectrum)
+    % use ft_bl and ft_bl_spectrum from workspace ??? No ??
+F = fft2(double(im_blur_noisy));
+F_shifted = fftshift(F); % Centering the zero frequency
+F_spectrum = abs(F_shifted); % compute magnitude spectrum % and display? 
+
+% Find the first zero crossing in frequency
+N = size(F_shifted, 1);    % Assuming square image
+u = -N:N;          % Frequency indices
+
+% Find first zero (where spectrum approaches zero)
+threshold = max(F_spectrum(:)) * 0.0000008; % Define a small threshold
+zero_frequencies = F_spectrum < threshold;
+zero_index = find(F_spectrum(N/2+1, :) < threshold, 1, 'first'); 
+
+figure, subplot(1,2,1), imshow(log(F_spectrum), []), title('Log FT Spectrum')
+subplot(1,2,2), imshow(log(F_spectrum), []), hold on;
+[row, col] = find(zero_frequencies);
+
+fx_vals = u(row);
+fy_vals = u(col);
+disp('Near-zero frequency components:');
+disp(table(fx_vals(:), fy_vals(:), 'VariableNames', {'fx', 'fy'}));
+
+plot(col, row, 'r', 'MarkerSize', 1);
+title('Near-Zero frequency components'), hold off;
+
+zero_indexes = [fx_vals , fy_vals];
+% Estimate T using the first zero crossing
+for i = 1:max(size(zero_indexes))
+    u = abs(zero_indexes(i));
+    T_estimated = (N / (2 * u)) - 0.5;
+    fprintf('Estimated T: %.2f\n', T_estimated);
+end
+    
+
