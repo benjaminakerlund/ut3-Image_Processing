@@ -45,9 +45,7 @@ Some properties of Erosion and Dilation include:
 \newpage
 \textbf{Question 2} \textit{Operate in a binary image and a greyscale image with the MatLab commands imerode and imdilate. What are the eﬀects on binary and grayscale images? Justify. Try with diﬀerent structuring elements (diﬀerent shapes, diﬀerent sizes).}
 
-In the figure below, the eroded and dilated images can be seen plotted next to the original image for each structuring element with the following shapes in order: rectangle, disk, diamond and line. \TODO{Mention something about the different quality of output for these? Which one is best? Why is it like the Erosion and Dilation results are flipped? Shouldn't erosion shrink the stuff and dilation expand the stuff?}
-
-\vfill
+In the figure below, the eroded and dilated images can be seen plotted next to the original image for each structuring element with the following shapes in order: rectangle, disk, diamond and line. 
 
 \begin{figure}[H]
     \centering
@@ -56,7 +54,7 @@ In the figure below, the eroded and dilated images can be seen plotted next to t
 
 
 \newpage
-\textbf{Question 3} \textit{Extract internal and external edges of a binary image, and the morphological gradian.}
+\textbf{Question 3} \textit{Extract internal and external edges of a binary image, and the morphological gradient.}
 \begin{figure}[h]
     \centering
     \includegraphics[width=1\linewidth]{Doc/Graphics/Part2/Part2_Question3.png}
@@ -121,6 +119,7 @@ The algorithm breaks and does not function at all due to the noise in the pictur
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{Doc/Graphics/Part2/part2_Q9.png}
+    \caption{Nebula with added and then removed noise}
 \end{figure}
 
 \textbf{Question 10} \textit{Apply the same process to the ’Spain Beach’ image to isolate the beach itself.}
@@ -130,10 +129,6 @@ The algorithm breaks and does not function at all due to the noise in the pictur
     \includegraphics[width=0.5\linewidth]{Doc/Graphics/Part2/part2_Q10.png}
 \end{figure}
 
-
-
-
-\newpage
 \subsubsection{Top-Hat \& Black-Hat Filters}
 \textbf{Question 11} \textit{Deﬁne Top-hat and black-hat process in a 1D function: what is the associated process?}
 
@@ -146,12 +141,37 @@ The algorithm breaks and does not function at all due to the noise in the pictur
 
 \textbf{Question 12} \textit{Deﬁne and operate top-hat and black-hat on a greyscale image. What do you observe?}
 
-\TODO{What do you observe?? My brain is not working anymore}
-
-\begin{figure}[H]
+\begin{figure}[!ht]
     \centering
-    \includegraphics[width=1\linewidth]{Doc/Graphics/Part2/Q12.png}
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q12_Original_bw.png}
+        \caption{Original in grayscale}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q12_whitehat.png}
+        \caption{Top-hat}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q12_blackhat.png}
+        \caption{Black-hat}
+    \end{subfigure}
+    \caption{Transform results}
+    \label{fig:enter-label}
 \end{figure}
+We can observe that the top-hat transform preserves the small, bright details, while the black-hat transform keeps the dark details, such as the dark gas clouds in the nebula.
+
+% \TODO{What do you observe?? My brain is not working anymore}
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=1\linewidth]{Doc/Graphics/Part2/Q12.png}
+% \end{figure}
+% \FloatBarrier
 
 \newpage
 \subsection{Morphological Skeletonization \& Segmentation}
@@ -177,7 +197,6 @@ The algorithm breaks and does not function at all due to the noise in the pictur
 \subsubsection{Image Segmentation}
 \textbf{Question 15} \textit{Find a Skeletonization algorithm and operate on the Blood Cells image.}
 
-\TODO{Write about why this does not work really well for the "real" image of the blood cells, even if we "binarise" it... Write about what steps we could take to maybe make it work?}
 
 \begin{figure}[H]
     \centering

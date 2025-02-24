@@ -88,37 +88,58 @@ Exercises for \textit{BE1\_IntroComputerVision} practical.
 \textbf{Question 7:}
 \textit{What are the values of $\alpha$, $\beta$ and $\gamma$?}
 
-$\alpha$ and $\beta$ are values used to describe an image's contrast and brightness, respectively. 
-A higher contrast value (>1) increases the difference between pixel values making dark areas darker and bright areas brighter, while a lower value does the opposite. A positive brightness value makes the image brighter by adding intensity, while a negative value makes it darker.
-In a linear transformation of an image, the pixel intensities can be modified with the following equation:
-\[
-I_{\text{new}}(x, y) = \alpha \cdot I_{\text{old}}(x, y) + \beta
-\]
+When converting an RGB image to grayscale, the channels get summed according to the weights given by $\alpha$, $\beta$ and $\gamma$:
+\begin{equation}
+    I = \alpha \cdot r + \beta \cdot g + \gamma \cdot b
+\end{equation}
+Their values are 
+\begin{align*}
+    \alpha &= 0.299 \\
+    \beta &= 0.587 \\
+    \gamma &= 0.114
+\end{align*}
+to best reflect the way the human vision works, which is much more sensitive to green and red than to blue.
 
-$\gamma$ correction is a nonlinear transformation applied to an image to adjust both brightness and contrast such that a higher gamma value makes the image darker and a lower value makes it brighter. The formula for gamma correction in the normalised form, i.e., in range [0,1], is:
-\[
-I_{\text{new}}(x, y) = I_{\text{old}}(x, y)^\gamma
-\]
+% $\alpha$ and $\beta$ are values used to describe an image's contrast and brightness, respectively. 
+% A higher contrast value (>1) increases the difference between pixel values making dark areas darker and bright areas brighter, while a lower value does the opposite. A positive brightness value makes the image brighter by adding intensity, while a negative value makes it darker.
+% In a linear transformation of an image, the pixel intensities can be modified with the following equation:
+% \[
+% I_{\text{new}}(x, y) = \alpha \cdot I_{\text{old}}(x, y) + \beta
+% \]
 
-An example of both forms of correction can be seen in the figure below:
+% $\gamma$ correction is a nonlinear transformation applied to an image to adjust both brightness and contrast such that a higher gamma value makes the image darker and a lower value makes it brighter. The formula for gamma correction in the normalised form, i.e., in range [0,1], is:
+% \[
+% I_{\text{new}}(x, y) = I_{\text{old}}(x, y)^\gamma
+% \]
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.6\linewidth]{Doc/Graphics/Part1/Q7.png}
-\end{figure}
+% An example of both forms of correction can be seen in the figure below:
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.6\linewidth]{Doc/Graphics/Part1/Q7.png}
+% \end{figure}
 
 
 \textbf{Question 8:}
 \textit{Load and display SpainBeach.png and isolate the beach.}
 
-\TODO{Any commentary on how we did this?}
-
-\begin{figure}[H]
+We can do some primitive feature extraction based on color ranges. While it is difficult to so in RGB as the colors are highly correlated, it is easier to do so in HSV space. We select beach-like colors by selecting a range of hue values, which leads to the result in \autoref{fig:resultQ8}.
+\begin{figure}[!ht]
     \centering
-    \includegraphics[width=\linewidth]{Doc/Graphics/Part1/Part1_Question8.png}
-    \label{fig:enter-label}
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{BE1_IntroComputerVision/SpainBeach.jpg}
+        \caption{Original}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.49\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q8_FilteredBeach.png}
+        \caption{Filtered beach}
+    \end{subfigure}
+    \caption{Hue color filtering}
+    \label{fig:resultQ8}
 \end{figure}
-
 
 
 \subsubsection{Histograms}
@@ -130,18 +151,31 @@ A histogram of an image represents the intensity level repartition in the image 
 
 However, spatial information is lost. 
 If we take the histogram of the Grayscale illusion we can see that the color value in the center bar is clearly overrepresented.
-
-\begin{figure}[h]
+\begin{figure}[!ht]
     \centering
     \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/part1_Q9.png}
 \end{figure}
 
+On the image \texttt{SpainBeach.jpg}, the histogram in \autoref{fig:resultQ9} is less symmetrical. An equalized option is also available, which adjusts the bin size dynamically.
+\begin{figure}[!ht]
+    \centering
+    \includegraphics[width=0.5\linewidth]{Doc/Graphics/Part1/Q9_Hist.png}
+    \caption{Grayscale histogram}
+    \label{fig:resultQ9}
+\end{figure}
+\FloatBarrier
 
 \textbf{Question 10:}
 \textit{Work the mysterious images called Imagex.bmp and Imagexx.bmp.}
 
-\TODO{What the hell does "work the images" mean? XDD Did some shit in matlab but idk}
-
+Images with the extension \texttt{.bmp} not only include pixel colors, but also a color map. In the case of imagexx this map is empty, leading to a black-looking image by default. However plotting the image as a double data type increases the saturation, and what seems to be the Earth appears, in wrong colors however.
+\begin{figure}[!ht]
+    \centering
+        \includegraphics[width=0.5\linewidth]{Doc/Graphics/Part1/Q10_Mystery.png}
+    \caption{Mystery image}
+    \label{fig:enter-label}
+\end{figure}
+\FloatBarrier
 
 
 
@@ -193,20 +227,108 @@ The process to isolate the 5 largest stars can be to first convert the image to 
 
 
 \subsection{Fourier Transform}
+
 \textbf{Question 13:}
 \textit{Get the FT and analyze the spectrum if images with stripes (Fig. 2), rectangle and disks (Fig. 3).}
 
-\TODO{Do we want to comment on this? Note, I zoomed in the FT of stripes so that something would be visible...}
+The Fourier transform seems to exhibit a repeating pattern that is close to the original shape, such as the concentric circles and the rectangles. As a rule of thumb the orientation of the periodic features, such as the stripes can also be found in the spectrum again.
 
-\begin{figure}[H]
+\begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/part1_Question13b.png}
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q3_rect.png}
+        \caption{Original}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q13_Rectangle.png}
+        \caption{Linear Spectrum}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q13_log_Rectangle.png}
+        \caption{Log Spectrum}
+    \end{subfigure}
+    \caption{Fourier transform of rectangle}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!ht]
     \centering
-    \includegraphics[width=\linewidth]{Doc/Graphics/Part1/Part1_Question13a.png}
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q3_circ.png}
+        \caption{Original}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q13_Circle.png}
+        \caption{Linear Spectrum}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q13_log_Circle.png}
+        \caption{Log Spectrum}
+    \end{subfigure}
+    \caption{Fourier transform of circle}
 \end{figure}
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q3_hstripes.png}
+        \caption{Original}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q13_Horizontal stripes.png}
+        \caption{Linear Spectrum}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q13_log_Horizontal stripes.png}
+        \caption{Log Spectrum}
+    \end{subfigure}
+    \caption{Fourier transform of horizontal stripes}
+\end{figure}
+\begin{figure}[!ht]
+    \centering
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q3_vstripes.png}
+        \caption{Original}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q13_Vertical stripes.png}
+        \caption{Linear Spectrum}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q13_log_Vertical stripes.png}
+        \caption{Log Spectrum}
+    \end{subfigure}
+    \caption{Fourier transform of vertical stripes}
+\end{figure}
+\FloatBarrier
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/part1_Question13b.png}
+% \end{figure}
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=\linewidth]{Doc/Graphics/Part1/Part1_Question13a.png}
+% \end{figure}
 
 
 
@@ -214,48 +336,141 @@ The process to isolate the 5 largest stars can be to first convert the image to 
 \textbf{Question 14:}
 \textit{Blur the image with diﬀerent kernels and interpret the spectrum.}
 
-\textbf{Stripes:}
-An analysis of the different blurring kernel option performances can be seen in the answer for \textit{Question 12. The FT on the other hand...}
-\TODO{Not sure about my analysis of these pictures, please read through and correct as you see fit. Also pls put some comments here on the stripes images...}
+As we blur the images with larger disks, the blur is more pronounced. In the Fourier transform spectrum this results in high frequencies getting eliminated and the low frequencies around the origin becoming more pronounced. This is to be expected, as blurring eliminates small details which yield high frequencies in the spectrum. 
 
+At the same time, the blurred spectra also show that similar features to both the image and the blurring kernel. In this case, we blur the image with a disk, which leads to the emergence of circular patterns in the spectrum. This can be lead back to the mathematical relation that a convolution is equal to a multiplication in the frequency domain.
 
-
-\begin{figure}[H]
+\begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/Q14a.png}
+    \begin{subfigure}{0.24\textwidth}
+        \centering
+        \adjustbox{valign=c}{\includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q14_Disk10_Rectangle.png}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.24\textwidth}
+        \centering
+        \adjustbox{valign=c}{\includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q14_Disk10_Circle.png}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.24\textwidth}
+        \centering
+        \adjustbox{valign=c}{\includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q14_Disk10_Horizontal stripes.png}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.24\textwidth}
+        \centering
+        \adjustbox{valign=c}{\includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q14_Disk10_Vertical stripes.png}}
+    \end{subfigure}
+
+    \begin{subfigure}{0.24\textwidth}
+        \centering
+        \adjustbox{valign=c}{\includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q14_Disk10_log_Rectangle.png}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.24\textwidth}
+        \centering
+        \adjustbox{valign=c}{\includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q14_Disk10_log_Circle.png}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.24\textwidth}
+        \centering
+        \adjustbox{valign=c}{\includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q14_Disk10_log_Horizontal stripes.png}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.24\textwidth}
+        \centering
+        \adjustbox{valign=c}{\includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q14_Disk10_log_Vertical stripes.png}}
+    \end{subfigure}
+    \caption{Blurring with disk of radius 10}
+    \label{fig:resultQ14Disk10}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/Q14b.png}
+    \begin{subfigure}{0.24\textwidth}
+        \centering
+        \adjustbox{valign=c}{\includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q14_Disk50_Rectangle.png}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.24\textwidth}
+        \centering
+        \adjustbox{valign=c}{\includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q14_Disk50_Circle.png}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.24\textwidth}
+        \centering
+        \adjustbox{valign=c}{\includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q14_Disk50_Horizontal stripes.png}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.24\textwidth}
+        \centering
+        \adjustbox{valign=c}{\includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q14_Disk50_Vertical stripes.png}}
+    \end{subfigure}
+    
+    \begin{subfigure}{0.24\textwidth}
+        \centering
+        \adjustbox{valign=c}{\includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q14_Disk50_log_Rectangle.png}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.24\textwidth}
+        \centering
+        \adjustbox{valign=c}{\includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q14_Disk50_log_Circle.png}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.24\textwidth}
+        \centering
+        \adjustbox{valign=c}{\includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q14_Disk50_log_Horizontal stripes.png}}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.24\textwidth}
+        \centering
+        \adjustbox{valign=c}{\includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q14_Disk50_log_Vertical stripes.png}}
+    \end{subfigure}
+    \caption{Blurring with disk of radius 50}
+    \label{fig:resultQ14Disk50}
 \end{figure}
+\FloatBarrier
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/Q14c.png}
-\end{figure}
 
-\textbf{Rectangle and Disks:}
+% \textbf{Stripes:}
+% An analysis of the different blurring kernel option performances can be seen in the answer for \textit{Question 12. The FT on the other hand...}
 
-Even though the images appear well blurred with the Motion kernel, the FT does not display that much information in the image, mostly being focused in the corners and the spectrum being focused sharply in the middle for the rectangle image, and in a vertical line for the circle image. Note, we had to give parameters for length and $\theta$ to get a visible result with this kernel. For the other kernels, we used the default parameters.
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/Q14a.png}
+% \end{figure}
 
-The blurring of the rectangle and disk images is not quite as visible when displaying only the blurred image with the Gaussian kernel, as compared to the Motion kernel, however from the FT it is quite obvious that something has happened to the image. Particularly the circle image displays an  interesting pattern that seems to repeat throughout the image and is concentrated in the center. The Fourier spectrum in the rightmost subplot shows a similar spectrum as the horizontal stripes, however the elements continue throughout the whole spectrum (in the vertical direction) instead of being concentrated only in the middle. The Log kernel again detects the edges of the rectangle and circle, and the mathematically repeating pattern in the FT images is even stronger.
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/Q14b.png}
+% \end{figure}
 
-An example of blurring and FT of the rectangle and circle images with the Gaussian kernel can be seen below.
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/Q14c.png}
+% \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/Q14e.png}
-\end{figure}
+% \textbf{Rectangle and Disks:}
+
+% Even though the images appear well blurred with the Motion kernel, the FT does not display that much information in the image, mostly being focused in the corners and the spectrum being focused sharply in the middle for the rectangle image, and in a vertical line for the circle image. Note, we had to give parameters for length and $\theta$ to get a visible result with this kernel. For the other kernels, we used the default parameters.
+
+% The blurring of the rectangle and disk images is not quite as visible when displaying only the blurred image with the Gaussian kernel, as compared to the Motion kernel, however from the FT it is quite obvious that something has happened to the image. Particularly the circle image displays an  interesting pattern that seems to repeat throughout the image and is concentrated in the center. The Fourier spectrum in the rightmost subplot shows a similar spectrum as the horizontal stripes, however the elements continue throughout the whole spectrum (in the vertical direction) instead of being concentrated only in the middle. The Log kernel again detects the edges of the rectangle and circle, and the mathematically repeating pattern in the FT images is even stronger.
+
+% An example of blurring and FT of the rectangle and circle images with the Gaussian kernel can be seen below.
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/Q14e.png}
+% \end{figure}
 
 \textbf{Question 15:}
 \textit{Write a program that extracts the speciﬁc ﬁeld in the image Champs.jpg (see Fig. 5).}
 
-\TODO{Comment on this image?? or just leave it as such??}
+Since the field has periodic grooves, we can isolate it by narrowing down the range of allowable frequencies from the Fourier spectrum. We want to match the orientation of the field in the spectrum, while also blocking of values close to the origin of the spectrum, which carry noise and are too low in frequency to be relevant.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{Doc/Graphics/Part1/Part1_Question15.png}
+    \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Part1_Question15.png}
     \label{fig:enter-label}
 \end{figure}
 
@@ -278,7 +493,7 @@ The main sources of blur in an image are:
 
 As a first approximation, a blurred image can be modelled as follows:
 \begin{equation}
-    Y = H * I + B
+    Y = H  *  I + B
 \end{equation}
 where:
 \begin{itemize}
@@ -302,36 +517,89 @@ Finally, the model assumes the only present noise form would be Gaussian noise, 
 \textit{Load the image of Toulouse (\textbf{toulouse.bmp}), blur this image with a $(2T+1)$-sized square kernel (Typically $T = 3$). The convolution kernel is thus $h(x,y) = \alpha$ if $|x| \leq T$ and $|y| \leq T$, with $\alpha = \frac{1}{(2T+1)^2}$.
 }
 
-The original image with added blur and noise can be seen below:
+The original image with added blur and noise can be seen in \autoref{fig:resultQ16}. The chosen parameters for the processing are $T=3$ and a standard deviation of 2 for the gaussian noise.
 
-\begin{figure}[H]
+\begin{figure}[!ht]
     \centering
-    \includegraphics[width=1\linewidth]{Doc/Graphics/Part1/Q16.png}
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q17_Original.png}
+        \caption{Original}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q17_Blurred.png}
+        \caption{Blurred}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q17_Noisy.png}
+        \caption{Blurred and noisy}
+    \end{subfigure}
+    \caption{Processed images}
+    \label{fig:resultQ16}
 \end{figure}
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=1\linewidth]{Doc/Graphics/Part1/Q16.png}
+% \end{figure}
 
 
 
 \textbf{Question 17:}
 \textit{Compare the spectrums of the original image and of the blur image: what do you observe? Justify.}
 
-Not much can be said about the fft2 and FT spectrum for both images. In the fft2 we see a typical even random distribution of frequencies and in the abs() domain, these are concentrated to either being 1 or 0 and visible only around the zero-point of the graph when zooming in. The Log of the FT spectrum however shows quite a difference when comparing the original and blurred/noisy image, and remarkably we can see a "cross" pattern in the center of the log spectrum for the blurred/noisy image.
+We can see that the spectrum of the blurred images has a repeating pattern of squares, which decrease in intensity. This is due to the blurring kernel being essentially a box function, whose Fourier spectrum is a cardinal sine function in both axes. Once noise is added, the sharp features are washed out, and the aforementioned repeating patterns are most visible towards the axes, where the Fourier transform of the blurring kernel yielded the largest amplitudes initially.
 
-The fft2, FT spectrum and log of the FT spectrum can be seen in the image below.
-Note that the FT spectrum and log FT spectrum are zoomed in for clarity.
-
-
-\begin{figure}[H]
+\begin{figure}[!ht]
     \centering
-    \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/Q17a.png}
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q17_FT_Spectrum_Original.png}
+        \caption{Original}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q17_FT_Spectrum_Blurred.png}
+        \caption{Blurred}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q17_FT_Spectrum_Blurred and Noisy.png}
+        \caption{Blurred and noisy}
+    \end{subfigure}
+    \caption{Fourier Spectrum}
+    \label{fig:enter-label}
 \end{figure}
+\FloatBarrier
 
-To further the comparison, in exaggeration the difference between the two images and their spectra is shown in the image below.
-\TODO{Any comment on this difference?}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/Q17b.png}
-\end{figure}
+
+
+
+% Not much can be said about the fft2 and FT spectrum for both images. In the fft2 we see a typical even random distribution of frequencies and in the abs() domain, these are concentrated to either being 1 or 0 and visible only around the zero-point of the graph when zooming in. The Log of the FT spectrum however shows quite a difference when comparing the original and blurred/noisy image, and remarkably we can see a "cross" pattern in the center of the log spectrum for the blurred/noisy image.
+
+% The fft2, FT spectrum and log of the FT spectrum can be seen in the image below.
+% Note that the FT spectrum and log FT spectrum are zoomed in for clarity.
+
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/Q17a.png}
+% \end{figure}
+
+% To further the comparison, in exaggeration the difference between the two images and their spectra is shown in the image below.
+% \TODO{Any comment on this difference?}
+
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=0.75\linewidth]{Doc/Graphics/Part1/Q17b.png}
+% \end{figure}
 
 \subsubsection{Blur Estimation}
 The objective is here to estimate a posteriori the value of $T$, \textit{i.e.} from the blurred image.
@@ -401,38 +669,77 @@ Then we could based on this frequency calculate the T-value from \autoref{eq:zer
 
 \textit{Compare the original image spectrum and the blurred image spectrum (using eventually the log function):}
 
-See Log plots in \textit{Question 17}. 
-\TODO{Thoughs? I would say that more high-frequency components can be visible in the blurred/noisy image than in the original image? Is this correct and makes sense? Why does it make sense?}
+The difference between the original image and the blurred image is as expected very pronounced in the square pattern, but also very large in the center of the spectrum.
 
-
+\begin{figure}[!ht]
+    \centering
+    \hspace*{\fill}
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q18_FT_Spectrum.png}
+        \caption{Linear scale}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.32\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q18_FT_Spectrum_Log.png}
+        \caption{Logarithmic scale}
+    \end{subfigure}
+    \hspace*{\fill}    
+    \caption{Difference of the Fourier spectra}
+    \label{fig:enter-label}
+\end{figure}
 
 \textbf{Question 19:} \textit{Estimate T.}
 
-With the above described algorithmic approach we created a MatLab script to estimate the T value for the first harmonic $k=1$ and the output gives the following estimates:
-\begin{lstlisting}
-    Near-zero frequency components:
-     fx      fy 
-    ____    ____
-    
-    -308    -404
-    -204    -108
-    
-    Estimated T: 0.33
-    Estimated T: 0.75
-    Estimated T: 0.13
-    Estimated T: 1.87
-\end{lstlisting}
+Because of the periodicity, we can sum the spectrum in both dimensions to smooth out the noise and contribution from the images spectrum.
 
-Out of these values the last one is closest to our initial defined T value when we generated the image, however, this is not close at all to the real value. It took quite a lot of playing around with the sampling threshold to even get close to this and in the end, the noise we originally added to the blurred image might make the estimation of the T-value simply too unreliable. There might also be something wrong in the algorithm where we try to find which frequency the first harmonic 0 is approached.
+\begin{figure}[!ht]
+    \centering
+    \hspace*{\fill}
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q19_SumX.png}
+        \caption{$x$-direction}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.45\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Doc/Graphics/Part1/Q19_SumY.png}
+        \caption{$y$-direction}
+    \end{subfigure}
+    \hspace*{\fill}    
+    \caption{Sum of the Fourier Spectrum in one dimension}
+    \label{fig:enter-label}
+\end{figure}
 
-\TODO{fix?? I'm giving up...}
+We can see how the oscillations due to the cardinal sine can be found in the summed up spectrum. In fact, this is due to the images spectrum being multiplied with the cardinal sine, hence the appearance being not just the cardinal sine. We can nonetheless try to estimate $T$ by fitting sinc functions whose zeros correspond to the local minima of the sums. Depending on which minimum we fit, the value we obtain is roughly $T = 2.0$ to $T = 2.7$.
+
+
+% With the above described algorithmic approach we created a MatLab script to estimate the T value for the first harmonic $k=1$ and the output gives the following estimates:
+% \begin{lstlisting}
+%     Near-zero frequency components:
+%      fx      fy 
+%     ____    ____
+    
+%     -308    -404
+%     -204    -108
+    
+%     Estimated T: 0.33
+%     Estimated T: 0.75
+%     Estimated T: 0.13
+%     Estimated T: 1.87
+% \end{lstlisting}
+
+% Out of these values the last one is closest to our initial defined T value when we generated the image, however, this is not close at all to the real value. It took quite a lot of playing around with the sampling threshold to even get close to this and in the end, the noise we originally added to the blurred image might make the estimation of the T-value simply too unreliable. There might also be something wrong in the algorithm where we try to find which frequency the first harmonic 0 is approached.
+
 
 \subsubsection{Image Deblurring}
 
 Now, image deblurring (or image restoration) can be done using multiple methods. We focus on two of them:
 \begin{itemize}
-    \item Inverse Filtering: \TODO{What is this?}
-    \item Wiener Filtering: \TODO{What is this?}
+    \item Inverse Filtering: 
+    \item Wiener Filtering: 
 \end{itemize}
 
 Let $g(x, y)$ be the inverse filter of $h(x, y)$. In the spectral domain, we have:
@@ -483,8 +790,7 @@ The two lines to complete this program (with some small other adjustments) can b
 \textbf{Question 21:}
 \textit{What’s happen with the image marcheur.jpg ?}
 
-We can see that the motion blurred, but non-noisy \texttt{marcheur} picture is reconstructed partially, but not particularly well. The situation is the same also when noise is added. We can see that the algorithm performs significantly better for the \texttt{tuolouse.bmp} image.
-\TODO{Other comments?}
+We can see that the motion blurred, but non-noisy \texttt{marcheur.jpg} picture is reconstructed partially, but not particularly well. The situation is the same also when noise is added. We can see that the algorithm performs significantly better for the \texttt{toulouse.bmp} image. This is because the inverse filtering method here only applies the reverse operation to blurring with a square kernel. Since the motion blur kernel is not square, this method doesn't work on the \texttt{marcheur.jpg} image.  
 
 \begin{figure}[H]
     \centering
