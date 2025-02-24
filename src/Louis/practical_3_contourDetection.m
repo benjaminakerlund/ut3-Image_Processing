@@ -6,6 +6,21 @@ im_moon            = imread('Images/lunar-eclipse-sep-28-2015-michelle-wood-1.jp
 im_jupiter_earth   = imread('Images/Jupiter-dreams-meaning.jpg');
 im_jupiter_partial = imread('Images/d52ed43e4a_106828_jupiter-pole-sud-juno.jpg');
 
+function plotEdges(im)
+    % Pre-process images
+    im_gray = rgb2gray(im);
+    im_bw = imbinarize(im_gray, 0.1);
+    [height, width] = size(im_bw);
+    
+    % Detect edges
+    [B, L] = bwboundaries(im_bw, 'noholes');
+    figure, imshow(im), hold on
+    for k = 1:length(B)
+       boundary = B{k};
+       scatter(boundary(:,2), boundary(:,1), 5, 'filled', 'o')
+    end
+end
+
 function [x, y] = getEdges(im)
     im_gray = rgb2gray(im);
     threshold = 0.1;
@@ -137,63 +152,27 @@ findPlanetPseudoInverse(im_jupiter_earth, 'contourDection_pseudoInverse_jupiter_
 findPlanetPseudoInverse(im_jupiter_partial, 'contourDection_pseudoInverse_jupiter_partial.png');
 
 %% Circle detect with optimization
-
-function circleFitOptimize(im)
-    % Pre-process images
-    im_gray = rgb2gray(im);
-    im_bw = imbinarize(im_gray, 0.1);
-    [height, width] = size(im_bw);
-    
-    % Detect edges
-    [B, L] = bwboundaries(im_bw, 'noholes');
-    %figure, imshow(im), hold on
-    for k = 1:length(B)
-       boundary = B{k};
-       %scatter(boundary(:,2), boundary(:,1), 5, 'filled', 'o')
-    end
-    
-    global data_pts;
-    data_pts = B{1};
-    function d = cost_circle(x)
-        x_c = x(1); 
-        y_c = x(2); 
-        r   = x(3);
-        %radii = data_pts - [x_c; y_c];
-        %diff = r - radii
-        d = sum(abs(r - sqrt((data_pts(:,1) - x_c).^2 + (data_pts(:,2) - y_c).^2)));
-    end
-    
-    
-    x0 = [width/2, height/2, 100];
-    xopt = fminunc(@cost_circle, x0, optimset('Display', 'iter', 'PlotFcns', @optimplotfval));
-    
-    angles = 1:1:360;
-    y = xopt(3) .* cos(angles * pi/180) + xopt(1);
-    x = xopt(3) .* sin(angles * pi/180) + xopt(2);
-    figure, axis('equal'), xlim([0 width]), ylim([0 height]), hold on%imshow(im), hold on
-    scatter(data_pts(:,2), height-data_pts(:,1), 5, 'filled', 'o')
-    plot(x, height-y, LineWidth=2)
-    legend('Edges', 'Optimized fit')
-    axis off
+global data_pts;
+data_pts = B{1};
+function d = cost_circle(x)
+    global data_pts
+    x_c = x(1); 
+    y_c = x(2); 
+    r   = x(3);
+    d = sum(abs(r - sqrt((data_pts(:,1) - x_c).^2 + (data_pts(:,2) - y_c).^2)));
 end
 
-% settings to scale the plots uniformly
-x0 = 0;
-y0 = 0;
-width = 800;
-height = 600;
 
-circleFitOptimize(im_moon);
-set(gcf,'position',[x0,y0,width,height])
-saveas(gcf, 'Optimization_moon.png');
+x0 = [width/2, height/2, 100];
+xopt = fminunc(@cost_circle, x0, optimset('Display', 'iter'));
 
-circleFitOptimize(im_jupiter_earth);
-set(gcf,'position',[x0,y0,width,height])
-saveas(gcf, 'Optimization_jupiter_earth.png');
+angles = 1:1:360;
+y = xopt(3) .* cos(angles * pi/180) + xopt(1);
+x = xopt(3) .* sin(angles * pi/180) + xopt(2);
+figure, imshow(im), hold on
+scatter(data_pts(:,2), data_pts(:,1), 5, 'filled', 'o')
+scatter(x, y)
 
-circleFitOptimize(im_jupiter_partial);
-set(gcf,'position',[x0,y0,width,height])
-saveas(gcf, 'Optimization_jupiter_partial.png');
 
 %% Circle detect RANSAC
 

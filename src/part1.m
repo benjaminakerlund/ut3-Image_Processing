@@ -267,7 +267,6 @@ subplot(1,3,1), imshow(RGB), title('Original Image')
 subplot(1,3,2), imshow(rgb2hsv(RGB)), title('Filtered Image')
 subplot(1,3,3), imshow(mask), title('Isolated Beaches')
 
-
 %% Question 9
 clc; clear; close all;
 
